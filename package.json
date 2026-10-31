@@ -26,6 +26,7 @@
     "files": ["app/**/*", "LICENSE", "THIRD_PARTY_NOTICES.md", "package.json"],
     "extraResources": [
       { "from": "vendor/darwin-${arch}/mihomo", "to": "core/mihomo" },
+      { "from": "app/supervisor.sh", "to": "helpers/supervisor.sh" },
       { "from": "vendor/LICENSE.mihomo", "to": "core/LICENSE.mihomo" }
     ],
     "mac": {

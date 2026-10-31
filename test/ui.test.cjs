@@ -9,7 +9,9 @@ const { _electron: electron } = require('playwright');
 test('desktop UI loads with isolated renderer, correct platform and safe idle state', { timeout: 45000 }, async () => {
   const env = { ...process.env };
   delete env.ELECTRON_RUN_AS_NODE;
-  const desktop = await electron.launch({ args: [path.resolve(__dirname, '..')], env, timeout: 30000 });
+  const desktop = await electron.launch(process.env.POCKET_TEST_EXECUTABLE
+    ? { executablePath: process.env.POCKET_TEST_EXECUTABLE, args: [], env, timeout: 30000 }
+    : { args: [path.resolve(__dirname, '..')], env, timeout: 30000 });
   const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'pocketsocket-ui-'));
   try {
     const page = await desktop.firstWindow();

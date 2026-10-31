@@ -18,8 +18,9 @@ async function freePort() {
   return port;
 }
 class Tunnel {
-  constructor(core, onChange) {
+  constructor(core, onChange, supervisor = path.join(__dirname, '..', 'supervisor.sh')) {
     this.core = core;
+    this.supervisor = supervisor;
     this.onChange = onChange;
     this.state = { phase: 'idle', message: 'Başlamak için kendi WireGuard profilini seç.', connections: [], hasSession: false };
     this.session = null;
@@ -62,7 +63,7 @@ class Tunnel {
       await run(this.core, ['-t', '-d', stage, '-f', config], { timeout: 15000, maxBuffer: 1024 * 1024 });
       const parentStart = (await run('/bin/ps', ['-p', String(process.pid), '-o', 'lstart='])).stdout.replace(/\n$/, '');
       const coreHash = createHash('sha256').update(await fs.readFile(this.core)).digest('hex');
-      const apple = makeLaunchScript({ core: this.core, config, supervisor: path.join(__dirname, '..', 'supervisor.sh'), lease: s.lease, parentPid: process.pid, parentStart, coreHash });
+      const apple = makeLaunchScript({ core: this.core, config, supervisor: this.supervisor, lease: s.lease, parentPid: process.pid, parentStart, coreHash });
       const script = path.join(stage, 'launch.applescript');
       await fs.writeFile(script, apple, { mode: 0o600 });
       s.child = spawn('/usr/bin/osascript', [script], { stdio: ['ignore', 'ignore', 'pipe'] });

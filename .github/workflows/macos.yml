@@ -40,6 +40,8 @@ jobs:
         run: node scripts/check-applescript.cjs
       - name: Package Mac beta
         run: npm run build:mac -- --${{ matrix.arch }}
+      - name: Verify packaged helpers and launch the packaged application
+        run: node scripts/check-package.cjs
       - name: Include corresponding application and core source
         run: node scripts/package-source.cjs
       - uses: actions/upload-artifact@v4

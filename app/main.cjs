@@ -14,7 +14,8 @@ else {
   app.on('second-instance', () => { window?.show(); window?.focus(); });
   app.whenReady().then(() => {
     const core = app.isPackaged ? path.join(process.resourcesPath, 'core', 'mihomo') : path.join(__dirname, '..', 'vendor', `${process.platform}-${process.arch}`, process.platform === 'win32' ? 'mihomo.exe' : 'mihomo');
-    tunnel = new Tunnel(core, state => { if (window && !window.isDestroyed()) window.webContents.send('state', state); });
+    const supervisor = app.isPackaged ? path.join(process.resourcesPath, 'helpers', 'supervisor.sh') : path.join(__dirname, 'supervisor.sh');
+    tunnel = new Tunnel(core, state => { if (window && !window.isDestroyed()) window.webContents.send('state', state); }, supervisor);
     window = new BrowserWindow({
       width: 1010, height: 790, minWidth: 780, minHeight: 680,
       title: 'PocketSocket', backgroundColor: '#f6f5f1', autoHideMenuBar: true,
