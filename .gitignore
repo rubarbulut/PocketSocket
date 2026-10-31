@@ -1,0 +1,10 @@
+node_modules/
+dist/
+vendor/
+.tools/
+.build/
+*.conf
+*.log
+.DS_Store
+.env*
+!test/fixtures/

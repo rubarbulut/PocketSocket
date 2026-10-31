@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>PocketSocket</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="renderer.js" defer></script>
+</head>
+<body>
+  <header>
+    <div class="brand"><span class="mark" aria-hidden="true">p<span>↗</span></span><strong>PocketSocket<span class="beta">MAC BETA</span></strong></div>
+    <div class="status" id="status"><i></i><span id="status-label">Tünel kapalı</span></div>
+  </header>
+  <main>
+    <div class="intro"><span class="eyebrow">BAĞLANTIN, SENİN KURALLARIN.</span><h1>Bir uygulamaya tünel.<br>Geri kalanına özgürlük.</h1><p>Discord farklı yoldan bağlansın. Oyunun kendi bağlantısında kalsın.</p></div>
+    <div id="platform-warning" class="notice hidden" role="note">Bu sürüm macOS 13+ için. Bu bilgisayarda arayüzü inceleyebilirsin; tünel başlatılamaz.</div>
+    <section class="setup" aria-label="Bağlantı kurulumu">
+      <div class="step source-step">
+        <div class="step-heading"><span class="number">01</span><h2>Bağlantını getir</h2></div>
+        <button id="import" class="import"><span class="file-icon" aria-hidden="true">↥</span><span><strong id="profile-title">WireGuard dosyasını seç</strong><small id="profile-subtitle">VPN sağlayıcından aldığın .conf dosyası</small></span><span class="plus" aria-hidden="true">+</span></button>
+        <div class="source-footer"><span>Sunucu bizden değil, kontrol senden.</span><button id="forget" class="text-button hidden">Profili kaldır</button></div>
+      </div>
+      <div class="step apps-step">
+        <div class="step-heading"><span class="number">02</span><h2>Tünelden geçecekleri seç</h2></div>
+        <div id="apps" class="apps"></div>
+        <p class="hint">Diğer uygulamalar doğrudan bağlanır.</p>
+      </div>
+    </section>
+    <section class="routes" aria-label="Bağlantı yolları">
+      <div><span class="route-icon tunnel-icon" aria-hidden="true">↗</span><span><strong id="route-apps">Discord</strong><small>Seçilen uygulamalar</small></span><span class="route-line"></span><span class="route-tag">VPN tüneli</span></div>
+      <div><span class="route-icon direct-icon" aria-hidden="true">→</span><span><strong>Oyun, film ve diğerleri</strong><small>Diğer uygulamalar</small></span><span class="route-line"></span><span class="route-tag direct-tag">Doğrudan internet</span></div>
+    </section>
+    <div class="action"><button id="connect" class="connect" disabled><span id="connect-label">Bağlan</span><span aria-hidden="true">↗</span></button><p id="message" role="status" aria-live="polite">Başlamak için kendi WireGuard profilini seç.</p></div>
+    <details id="diagnostics"><summary><span>Canlı bağlantılar</span><span id="connection-count">0 bağlantı</span></summary><div class="table-wrap"><table><thead><tr><th>Uygulama</th><th>Hedef</th><th>Tür</th><th>Yol</th></tr></thead><tbody id="connections"></tbody></table><p id="empty">Bağlandıktan sonra Discord’u tamamen kapatıp aç. Yeni bağlantılar burada görünür.</p></div></details>
+    <footer><span id="version">PocketSocket</span><span>Profil yalnızca bu oturumda tutulur. Telemetri yok.</span></footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,40 @@
+{
+  "name": "pocketsocket",
+  "version": "0.1.0",
+  "description": "Seçtiğin uygulama tünelden, geri kalanı kendi bağlantından.",
+  "private": true,
+  "license": "GPL-3.0-only",
+  "main": "app/main.cjs",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/*.test.cjs",
+    "test:ui": "node --test test/ui.test.cjs",
+    "core:fetch": "node scripts/fetch-core.cjs",
+    "core:check": "node scripts/check-core.cjs",
+    "build:mac": "electron-builder --mac zip dmg --publish never"
+  },
+  "devDependencies": {
+    "electron": "45.2.1",
+    "electron-builder": "26.18.0",
+    "playwright": "1.64.1"
+  },
+  "build": {
+    "appId": "app.pocketsocket.desktop",
+    "productName": "PocketSocket",
+    "asar": true,
+    "files": ["app/**/*", "LICENSE", "THIRD_PARTY_NOTICES.md", "package.json"],
+    "extraResources": [
+      { "from": "vendor/darwin-${arch}/mihomo", "to": "core/mihomo" },
+      { "from": "vendor/LICENSE.mihomo", "to": "core/LICENSE.mihomo" }
+    ],
+    "mac": {
+      "category": "public.app-category.utilities",
+      "minimumSystemVersion": "13.0",
+      "identity": null,
+      "hardenedRuntime": false,
+      "artifactName": "PocketSocket-${version}-mac-${arch}.${ext}"
+    },
+    "dmg": { "title": "PocketSocket", "sign": false }
+  }
+}

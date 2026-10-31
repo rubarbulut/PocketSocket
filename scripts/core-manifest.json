@@ -1,0 +1,17 @@
+{
+  "version": "v1.19.33",
+  "assets": {
+    "darwin-arm64": {
+      "name": "mihomo-darwin-arm64-v1.19.33.gz",
+      "sha256": "060b64b0f2c9a310831db0fe4adb2878de67bfa606c311813c1f13966aa504b6"
+    },
+    "darwin-x64": {
+      "name": "mihomo-darwin-amd64-v1-v1.19.33.gz",
+      "sha256": "61f979d6aae3deffe4e3895161349c3d9189149eef88c5aceb7c6d4a7270a78d"
+    },
+    "win32-x64": {
+      "name": "mihomo-windows-amd64-v1-v1.19.33.zip",
+      "sha256": "fb0b960eff568459502d4ebe53e9cca203053d86ec9024fe935f19615d74d9aa"
+    }
+  }
+}

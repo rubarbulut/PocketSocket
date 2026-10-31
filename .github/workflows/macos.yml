@@ -1,0 +1,61 @@
+name: macOS beta
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    tags: ['v*']
+permissions:
+  contents: read
+concurrency:
+  group: macos-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    name: macOS ${{ matrix.arch }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            arch: arm64
+          - runner: macos-15-intel
+            arch: x64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 20
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run core:fetch -- darwin-${{ matrix.arch }}
+      - run: npm test
+      - run: npm run core:check
+      - name: Check supervisor syntax
+        run: /bin/sh -n app/supervisor.sh
+      - name: Compile authorization AppleScript without executing it
+        run: node scripts/check-applescript.cjs
+      - name: Package Mac beta
+        run: npm run build:mac -- --${{ matrix.arch }}
+      - name: Include corresponding application and core source
+        run: node scripts/package-source.cjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PocketSocket-mac-${{ matrix.arch }}
+          path: |
+            dist/*.dmg
+            dist/*.zip
+            dist/*source.tar.gz
+            dist/THIRD_PARTY_NOTICES.md
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: UI-check-${{ matrix.arch }}
+          path: .build/desktop.png
+          if-no-files-found: ignore
