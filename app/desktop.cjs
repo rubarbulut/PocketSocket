@@ -55,7 +55,7 @@ async function addApp(descriptor){
   await store.update({customApps:custom,selected:[...new Set([...store.data.settings.selected,descriptor.id])]});return snapshot();
 }
 function external(id){
-  const links={issues:'https://github.com/rubarbulut/PocketSocket/issues',source:'https://github.com/rubarbulut/PocketSocket',releases:'https://github.com/rubarbulut/PocketSocket/releases',apple:'https://support.apple.com/en-us/102445',download:'https://rubarbulut.github.io/PocketSocket/'};
+  const links={issues:'https://github.com/rubarbulut/PocketSocket/issues',source:'https://github.com/rubarbulut/PocketSocket',releases:'https://github.com/rubarbulut/PocketSocket/releases',apple:'https://support.apple.com/en-us/102445',download:'https://github.com/rubarbulut/PocketSocket/releases'};
   const url=links[id]||PROVIDERS.find(p=>p.id===id)?.url;if(!url)throw new AppError('INTERNAL_ERROR');return shell.openExternal(url);
 }
 function handle(channel,operation){ipcMain.handle(channel,async(event,...args)=>{

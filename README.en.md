@@ -1,12 +1,12 @@
 <p align="center"><img src="docs/images/hero-en.svg" alt="PocketSocket: selected apps through your tunnel, everything else direct." width="100%"></p>
 <p align="center"><strong>Free · Open source · Windows / macOS / Linux · English / Türkçe</strong></p>
-<p align="center"><a href="README.md">Türkçe</a> · <a href="https://rubarbulut.github.io/PocketSocket/"><strong>📥 DOWNLOAD</strong></a> · <a href="#connect">🟢 Connect</a> · <a href="#installation-help">🛟 Help</a></p>
+<p align="center"><a href="README.md">Türkçe</a> · <a href="https://github.com/rubarbulut/PocketSocket/releases"><strong>📥 DOWNLOAD</strong></a> · <a href="#connect">🟢 Connect</a> · <a href="#installation-help">🛟 Help</a></p>
 
 > **Public beta.** Bring your own WireGuard internet profile or compatible **localhost SOCKS5 proxy**. PocketSocket provides no VPN servers or accounts. Encrypted DNS mode is also available; it cannot bypass every access restriction.
 
 ## Download and install
 
-**[Open the download page →](https://rubarbulut.github.io/PocketSocket/)** No GitHub account required. [All release files, corresponding source and SHA256SUMS](https://github.com/rubarbulut/PocketSocket/releases).
+**[Open the download page →](https://github.com/rubarbulut/PocketSocket/releases)** No GitHub account required. [All release files, corresponding source and SHA256SUMS](https://github.com/rubarbulut/PocketSocket/releases).
 
 | Device | Package |
 | --- | --- |

@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "description": "Your apps. Your routes. Free selected-app routing for Windows, macOS and Linux.",
   "author": "PocketSocket contributors",
-  "homepage": "https://rubarbulut.github.io/PocketSocket/",
+  "homepage": "https://github.com/rubarbulut/PocketSocket/releases",
   "repository": { "type": "git", "url": "https://github.com/rubarbulut/PocketSocket.git" },
   "private": true,
   "license": "GPL-3.0-only",

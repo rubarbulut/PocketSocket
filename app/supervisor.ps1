@@ -1,5 +1,6 @@
 param([Parameter(Mandatory=$true)][string]$Manifest)
 $ErrorActionPreference = 'Stop'
+$ProgressPreference = 'SilentlyContinue'
 $m = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($Manifest)) | ConvertFrom-Json
 if ($m.coreHash -notmatch '^[a-f0-9]{64}$' -or [int]$m.parentPid -lt 1) { exit 70 }
 $identity = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()
@@ -39,6 +40,16 @@ try {
   $core = Start-Process -FilePath $binary -ArgumentList $arguments -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $root 'stdout.log') -RedirectStandardError (Join-Path $root 'stderr.log')
   while (-not $core.HasExited -and (Test-Lease)) { Start-Sleep -Seconds 2; $core.Refresh() }
 } finally {
+  # A GUI crash cannot send the normal disconnect request. Release TUN/DNS here too.
+  if ($core -and -not $core.HasExited) {
+    try {
+      $configuration = Get-Content -Raw -LiteralPath (Join-Path $root 'config.json') | ConvertFrom-Json
+      $controller = $configuration.'external-controller'
+      if ($controller -match '^127\.0\.0\.1:[0-9]{1,5}$' -and $configuration.secret -match '^[a-f0-9]{64}$') {
+        Invoke-WebRequest -UseBasicParsing -Method Patch -Uri ('http://' + $controller + '/configs') -Headers @{ Authorization = ('Bearer ' + $configuration.secret) } -ContentType 'application/json' -Body '{"tun":{"enable":false}}' -TimeoutSec 3 | Out-Null
+      }
+    } catch { }
+  }
   # Stop only the process object created by this session; never terminate other VPNs.
   if ($core -and -not $core.HasExited) { $core.Kill(); $core.WaitForExit(10000) | Out-Null }
   $absolute = [IO.Path]::GetFullPath($root)

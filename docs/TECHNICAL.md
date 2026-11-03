@@ -34,7 +34,7 @@ Profile material is encrypted with Electron OS-backed safeStorage before persist
 
 Updates are checked on user request against public GitHub Releases. An Ed25519 public key is pinned in the app; the matching private key is an ignored local file and a GitHub Actions secret. Verified manifests list exact installer size and SHA-256. Downloaded installers are checked before being renamed to the user-selected final path. No unsigned/forged update is offered, and no automatic installer execution occurs. This release signature is independent from OS publisher signing. Earlier signed releases provide a manual rollback path.
 
-The publish workflow accepts only a successful Desktop packages run at the exact checked-out commit. It merges matching artifacts, includes corresponding app/core source, signs the manifest and publishes a public beta. The static GitHub Pages download page has no build/runtime backend or analytics.
+The publish workflow accepts only a successful Desktop packages run at the exact checked-out commit. It merges matching artifacts, includes corresponding app/core source, signs the manifest and publishes a public beta. Public GitHub Releases provide the download page and files without a visitor account. A buildless landing-page source is retained in docs; no separate website is deployed or required.
 
 ## Development
 
@@ -64,7 +64,7 @@ The privileged `check-supervisor.cjs` test refuses to run outside disposable Git
 
 - Provider links are setup guides; there is no universal VPN-client control API or provider login integration.
 - No bundled free account, owned VPN server, browser-tab-only routing, iOS/Android client or OS-persistent kill switch.
-- No paid signing/notarization, paid hosting or mandatory backend. Standard public-repository CI and GitHub Pages/Releases are used; service quotas still apply.
+- No paid signing/notarization, paid hosting or mandatory backend. Standard public-repository CI and GitHub Releases are used; service quotas still apply.
 - No anonymity, guaranteed unblock, stable ping or verified voice claim. Real-world provider/ISP/device checks remain necessary.
 - Core/source notices remain included under the project’s GPL-3.0 license; free distribution does not remove those obligations.
 

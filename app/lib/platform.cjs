@@ -41,7 +41,10 @@ async function launch({core,config,supervisor,lease,coreHash,stage}) {
     const {stdout}=await run('powershell.exe',['-NoProfile','-NonInteractive','-EncodedCommand',encodedPS(`(Get-Process -Id ${process.pid}).StartTime.ToUniversalTime().Ticks.ToString()`) ],{windowsHide:true,timeout:10000});
     const body=await fs.readFile(supervisor,'utf8');
     const script=windowsBootstrap(body,{core,config,lease,coreHash,parentPid:process.pid,parentStart:stdout.trim()});
-    return spawn('powershell.exe',['-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-EncodedCommand',encodedPS(script)],{windowsHide:true,stdio:['ignore','ignore','pipe']});
+    // Avoid Windows' 32K command-line limit: the private bootstrap file contains the
+    // outer launcher, while the elevated child still receives a bounded encoded script.
+    const bootstrap=path.join(stage,'bootstrap.ps1');await fs.writeFile(bootstrap,script,{mode:0o600});
+    return spawn('powershell.exe',['-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',bootstrap],{windowsHide:true,stdio:['ignore','ignore','pipe']});
   }
   const parentStart=(await run('/bin/ps',['-p',String(process.pid),'-o','lstart='])).stdout.replace(/\n$/,'');
   const args={core,config,supervisor,lease,parentPid:process.pid,parentStart,coreHash};

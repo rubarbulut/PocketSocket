@@ -14,7 +14,7 @@ Free selected-app routing for Windows 11 x64, macOS Apple Silicon/Intel and desk
 
 ## Download and install
 
-https://rubarbulut.github.io/PocketSocket/
+https://github.com/rubarbulut/PocketSocket/releases
 
 MacBook Neo (A18 Pro) and M-series Macs use **mac-arm64**. Intel Macs use **mac-x64**. Windows installer is **win-x64.exe**; a portable EXE is also included. Linux offers AppImage and tar.gz; routing needs PolicyKit.
 

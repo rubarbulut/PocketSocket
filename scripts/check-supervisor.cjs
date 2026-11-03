@@ -13,13 +13,14 @@ const {buildConfig}=require('../app/lib/config.cjs');
 const {parseWireGuard}=require('../app/lib/wireguard.cjs');
 const {profile}=require('../test/fixtures.cjs');
 const {makeLaunchScript}=require('../app/lib/privilege.cjs');
-const {makeLinuxScript,windowsBootstrap,encodedPS}=require('../app/lib/platform.cjs');
+const {makeLinuxScript,windowsBootstrap,encodedPS,secureStage}=require('../app/lib/platform.cjs');
 const run=promisify(execFile),sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function freePort(){const s=net.createServer();await new Promise(r=>s.listen(0,'127.0.0.1',r));const p=s.address().port;await new Promise(r=>s.close(r));return p;}
 (async()=>{
   const stage=await fs.mkdtemp(path.join(os.tmpdir(),'pocket-ci-'));let child,heartbeat,done;let logs='';
   const lease=path.join(stage,'lease');
   try{
+    await secureStage(stage);
     const core=path.resolve('vendor',`${process.platform}-${process.arch}`,process.platform==='win32'?'mihomo.exe':'mihomo');
     const port=await freePort(),secret=crypto.randomBytes(32).toString('hex');
     const config=path.join(stage,'config.json');await fs.writeFile(config,JSON.stringify(buildConfig(parseWireGuard(profile),['discord'],port,secret)),{mode:0o600});
@@ -30,7 +31,8 @@ async function freePort(){const s=net.createServer();await new Promise(r=>s.list
       assert.equal(identity,'True','Runner must already be elevated; CI never opens UAC.');
       const parentStart=(await run('powershell.exe',['-NoProfile','-NonInteractive','-EncodedCommand',encodedPS(`(Get-Process -Id ${process.pid}).StartTime.ToUniversalTime().Ticks.ToString()`)])).stdout.trim();
       const command=windowsBootstrap(await fs.readFile('app/supervisor.ps1','utf8'),{core,config,lease,coreHash,parentPid:process.pid,parentStart});
-      child=spawn('powershell.exe',['-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-EncodedCommand',encodedPS(command)],{windowsHide:true,stdio:['ignore','pipe','pipe']});
+      const bootstrap=path.join(stage,'bootstrap.ps1');await fs.writeFile(bootstrap,command,{mode:0o600});
+      child=spawn('powershell.exe',['-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',bootstrap],{windowsHide:true,stdio:['ignore','pipe','pipe']});
     }else{
       const parentStart=(await run('/bin/ps',['-p',String(process.pid),'-o','lstart='])).stdout.replace(/\n$/,'');
       const args={core,config,lease,coreHash,parentPid:process.pid,parentStart,supervisor:path.resolve('app',process.platform==='darwin'?'supervisor.sh':'supervisor-linux.sh')};

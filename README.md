@@ -1,12 +1,12 @@
 <p align="center"><img src="docs/images/hero.svg" alt="PocketSocket: seçtiğin uygulamalar tünelden, diğerleri doğrudan internetten." width="100%"></p>
 <p align="center"><strong>Ücretsiz · Açık kaynak · Windows / macOS / Linux · Türkçe / English</strong></p>
-<p align="center"><a href="README.en.md">English</a> · <a href="https://rubarbulut.github.io/PocketSocket/"><strong>📥 İNDİR</strong></a> · <a href="#ilk-bağlantı">🟢 Bağlan</a> · <a href="#açılmıyor-mu">🛟 Yardım</a></p>
+<p align="center"><a href="README.en.md">English</a> · <a href="https://github.com/rubarbulut/PocketSocket/releases"><strong>📥 İNDİR</strong></a> · <a href="#ilk-bağlantı">🟢 Bağlan</a> · <a href="#açılmıyor-mu">🛟 Yardım</a></p>
 
 > **Public beta:** PocketSocket sunucu veya VPN hesabı vermez. Tünel için kendi WireGuard profilini veya uyumlu bir **yerel SOCKS5 proxy** getirirsin. Ücretsiz DNS modu da vardır; her erişim engelini aşmaz.
 
 ## 1 · Cihazını seç
 
-**[İndirme sayfasını aç →](https://rubarbulut.github.io/PocketSocket/)** GitHub’a giriş yapman gerekmez. [Tüm yayın dosyaları, kaynak ve SHA256SUMS](https://github.com/rubarbulut/PocketSocket/releases).
+**[İndirme sayfasını aç →](https://github.com/rubarbulut/PocketSocket/releases)** GitHub’a giriş yapman gerekmez. [Tüm yayın dosyaları, kaynak ve SHA256SUMS](https://github.com/rubarbulut/PocketSocket/releases).
 
 | Cihaz | Paket |
 | --- | --- |
