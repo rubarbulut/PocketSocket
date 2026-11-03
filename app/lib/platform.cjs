@@ -7,11 +7,12 @@ const {makeLaunchScript,shellQuote}=require('./privilege.cjs');
 const {AppError}=require('./errors.cjs');
 const run=promisify(execFile);
 const encodedPS=script=>Buffer.from(script,'utf16le').toString('base64');
+function windowsEnv(){return {...process.env,PSModulePath:path.join(process.env.SystemRoot||'C:\\Windows','System32','WindowsPowerShell','v1.0','Modules')};}
 async function secureStage(directory) {
   if(process.platform!=='win32')return fs.chmod(directory,0o700);
   const encoded=Buffer.from(directory).toString('base64');
   const script=`$ErrorActionPreference='Stop';$p=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('${encoded}'));$a=New-Object Security.AccessControl.DirectorySecurity;$a.SetAccessRuleProtection($true,$false);$u=[Security.Principal.WindowsIdentity]::GetCurrent().User;$a.SetOwner($u);foreach($s in @($u,(New-Object Security.Principal.SecurityIdentifier('S-1-5-18')),(New-Object Security.Principal.SecurityIdentifier('S-1-5-32-544')))){$r=New-Object Security.AccessControl.FileSystemAccessRule($s,'FullControl','ContainerInherit,ObjectInherit','None','Allow');$a.AddAccessRule($r)};Set-Acl -LiteralPath $p -AclObject $a`;
-  await run('powershell.exe',['-NoProfile','-NonInteractive','-EncodedCommand',encodedPS(script)],{windowsHide:true,timeout:10000});
+  await run('powershell.exe',['-NoProfile','-NonInteractive','-EncodedCommand',encodedPS(script)],{windowsHide:true,env:windowsEnv(),timeout:10000});
 }
 function makeLinuxScript({core,config,supervisor,lease,coreHash,parentPid,parentStart}) {
   if(!Number.isInteger(parentPid)||parentPid<1||!/^[a-f0-9]{64}$/.test(coreHash))throw new AppError('START_FAILED');
@@ -38,13 +39,13 @@ function windowsBootstrap(body,manifest) {
 }
 async function launch({core,config,supervisor,lease,coreHash,stage}) {
   if(process.platform==='win32') {
-    const {stdout}=await run('powershell.exe',['-NoProfile','-NonInteractive','-EncodedCommand',encodedPS(`(Get-Process -Id ${process.pid}).StartTime.ToUniversalTime().Ticks.ToString()`) ],{windowsHide:true,timeout:10000});
+    const {stdout}=await run('powershell.exe',['-NoProfile','-NonInteractive','-EncodedCommand',encodedPS(`(Get-Process -Id ${process.pid}).StartTime.ToUniversalTime().Ticks.ToString()`) ],{windowsHide:true,env:windowsEnv(),timeout:10000});
     const body=await fs.readFile(supervisor,'utf8');
     const script=windowsBootstrap(body,{core,config,lease,coreHash,parentPid:process.pid,parentStart:stdout.trim()});
     // Avoid Windows' 32K command-line limit: the private bootstrap file contains the
     // outer launcher, while the elevated child still receives a bounded encoded script.
     const bootstrap=path.join(stage,'bootstrap.ps1');await fs.writeFile(bootstrap,script,{mode:0o600});
-    return spawn('powershell.exe',['-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',bootstrap],{windowsHide:true,stdio:['ignore','ignore','pipe']});
+    return spawn('powershell.exe',['-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',bootstrap],{windowsHide:true,env:windowsEnv(),stdio:['ignore','ignore','pipe']});
   }
   const parentStart=(await run('/bin/ps',['-p',String(process.pid),'-o','lstart='])).stdout.replace(/\n$/,'');
   const args={core,config,supervisor,lease,parentPid:process.pid,parentStart,coreHash};
@@ -60,4 +61,4 @@ async function launch({core,config,supervisor,lease,coreHash,stage}) {
   }
   throw new AppError('PLATFORM_UNSUPPORTED');
 }
-module.exports={launch,windowsBootstrap,encodedPS,makeLinuxScript,secureStage};
+module.exports={launch,windowsBootstrap,encodedPS,makeLinuxScript,secureStage,windowsEnv};

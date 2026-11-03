@@ -13,7 +13,7 @@ const {buildConfig}=require('../app/lib/config.cjs');
 const {parseWireGuard}=require('../app/lib/wireguard.cjs');
 const {profile}=require('../test/fixtures.cjs');
 const {makeLaunchScript}=require('../app/lib/privilege.cjs');
-const {makeLinuxScript,windowsBootstrap,encodedPS,secureStage}=require('../app/lib/platform.cjs');
+const {makeLinuxScript,windowsBootstrap,encodedPS,secureStage,windowsEnv}=require('../app/lib/platform.cjs');
 const run=promisify(execFile),sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function freePort(){const s=net.createServer();await new Promise(r=>s.listen(0,'127.0.0.1',r));const p=s.address().port;await new Promise(r=>s.close(r));return p;}
 (async()=>{
@@ -27,12 +27,12 @@ async function freePort(){const s=net.createServer();await new Promise(r=>s.list
     await fs.writeFile(lease,'',{mode:0o600});heartbeat=setInterval(()=>fs.utimes(lease,new Date(),new Date()).catch(()=>{}),2000);
     const coreHash=crypto.createHash('sha256').update(await fs.readFile(core)).digest('hex');
     if(process.platform==='win32'){
-      const identity=(await run('powershell.exe',['-NoProfile','-NonInteractive','-Command',"([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)"])).stdout.trim();
+      const identity=(await run('powershell.exe',['-NoProfile','-NonInteractive','-Command',"([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)"],{env:windowsEnv(),windowsHide:true})).stdout.trim();
       assert.equal(identity,'True','Runner must already be elevated; CI never opens UAC.');
-      const parentStart=(await run('powershell.exe',['-NoProfile','-NonInteractive','-EncodedCommand',encodedPS(`(Get-Process -Id ${process.pid}).StartTime.ToUniversalTime().Ticks.ToString()`)])).stdout.trim();
+      const parentStart=(await run('powershell.exe',['-NoProfile','-NonInteractive','-EncodedCommand',encodedPS(`(Get-Process -Id ${process.pid}).StartTime.ToUniversalTime().Ticks.ToString()`) ],{env:windowsEnv(),windowsHide:true})).stdout.trim();
       const command=windowsBootstrap(await fs.readFile('app/supervisor.ps1','utf8'),{core,config,lease,coreHash,parentPid:process.pid,parentStart});
       const bootstrap=path.join(stage,'bootstrap.ps1');await fs.writeFile(bootstrap,command,{mode:0o600});
-      child=spawn('powershell.exe',['-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',bootstrap],{windowsHide:true,stdio:['ignore','pipe','pipe']});
+      child=spawn('powershell.exe',['-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',bootstrap],{windowsHide:true,env:windowsEnv(),stdio:['ignore','pipe','pipe']});
     }else{
       const parentStart=(await run('/bin/ps',['-p',String(process.pid),'-o','lstart='])).stdout.replace(/\n$/,'');
       const args={core,config,lease,coreHash,parentPid:process.pid,parentStart,supervisor:path.resolve('app',process.platform==='darwin'?'supervisor.sh':'supervisor-linux.sh')};

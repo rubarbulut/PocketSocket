@@ -45,4 +45,5 @@ jobs:
         shell: bash
         run: |
           VERSION=$(node -p 'require("./package.json").version')
-          gh release create "v$VERSION" release/* --target "$GITHUB_SHA" --prerelease --title "PocketSocket $VERSION · Public beta" --notes-file docs/RELEASE_NOTES.md
+          gh release create "v$VERSION" release/* --target "$GITHUB_SHA" --draft --prerelease --title "PocketSocket $VERSION · Public beta" --notes-file docs/RELEASE_NOTES.md
+          gh release edit "v$VERSION" --draft=false

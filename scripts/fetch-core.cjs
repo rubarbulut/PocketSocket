@@ -30,7 +30,7 @@ async function download(url) {
     await fs.writeFile(zip, archive);
     const psQuote = s => "'" + s.replace(/'/g, "''") + "'";
     const command = `$ErrorActionPreference = 'Stop'; Expand-Archive -LiteralPath ${psQuote(zip)} -DestinationPath ${psQuote(dest)} -Force`;
-    execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-EncodedCommand', Buffer.from("$ProgressPreference='SilentlyContinue'; "+command, 'utf16le').toString('base64')],{windowsHide:true});
+    execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-EncodedCommand', Buffer.from("$ProgressPreference='SilentlyContinue'; "+command, 'utf16le').toString('base64')],{windowsHide:true,env:require('../app/lib/platform.cjs').windowsEnv()});
     const files = await fs.readdir(dest);
     const exe = files.find(n => n.endsWith('.exe'));
     if (!exe) throw new Error('Core executable not found.');

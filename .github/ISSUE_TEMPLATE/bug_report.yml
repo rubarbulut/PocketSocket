@@ -1,0 +1,47 @@
+name: Bug report / Hata bildir
+description: Report a connection, installation or interface problem without exposing private configuration.
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: "Never attach a .conf, password or private key. Review Help → Save support report before sharing. / .conf, parola veya özel anahtar paylaşma; destek raporunu önce incele."
+  - type: input
+    id: version
+    attributes:
+      label: PocketSocket version / Sürüm
+      placeholder: 0.2.0
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Windows 11 x64
+        - macOS Apple Silicon / MacBook Neo
+        - macOS Intel
+        - Desktop Linux x64
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Connection mode / Bağlantı yöntemi
+      options:
+        - WireGuard selected-app tunnel
+        - Local SOCKS5
+        - Encrypted DNS
+        - Smart detection
+        - Installation / UI only
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened? / Ne oldu?
+      description: Include the exact error, steps and what you expected. Do not include credentials or unredacted destination lists.
+    validations:
+      required: true
+  - type: textarea
+    id: report
+    attributes:
+      label: Reviewed support report / İncelenmiş destek raporu
+      description: Optional; remove anything you do not want to publish. / İsteğe bağlı; public olmasını istemediğin bilgileri çıkar.

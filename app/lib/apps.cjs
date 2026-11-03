@@ -47,7 +47,7 @@ async function discover() {
     for(const dir of ['/Applications',path.join(os.homedir(),'Applications')]) try { filenames.push(...(await fs.readdir(dir)).filter(n=>n.endsWith('.app')).map(n=>path.join(dir,n))); } catch {}
   } else if(process.platform==='win32') {
     const script=`$ErrorActionPreference='SilentlyContinue'; $w=New-Object -ComObject WScript.Shell; $roots=@([Environment]::GetFolderPath('StartMenu'),[Environment]::GetFolderPath('CommonStartMenu')); $items=@(Get-ChildItem -LiteralPath $roots -Filter '*.lnk' -Recurse | Select-Object -First 180 | ForEach-Object { $p=$w.CreateShortcut($_.FullName).TargetPath; if($p -and $p.EndsWith('.exe') -and $_.BaseName -notmatch 'uninstall|installer|updater' -and (Test-Path -LiteralPath $p)) { $p } }); ConvertTo-Json -InputObject $items -Compress`;
-    const {stdout}=await run('powershell.exe',['-NoProfile','-NonInteractive','-EncodedCommand',Buffer.from(script,'utf16le').toString('base64')],{windowsHide:true,timeout:20000,maxBuffer:1024*1024});
+    const {stdout}=await run('powershell.exe',['-NoProfile','-NonInteractive','-EncodedCommand',Buffer.from(script,'utf16le').toString('base64')],{windowsHide:true,env:require('./platform.cjs').windowsEnv(),timeout:20000,maxBuffer:1024*1024});
     filenames=JSON.parse(stdout||'[]');
   } else {
     for(const dir of ['/usr/share/applications',path.join(os.homedir(),'.local/share/applications')]) try {
