@@ -58,6 +58,10 @@ test('desktop lifecycle: translations, profiles, preferences and redacted report
     const text=await fs.readFile(report,'utf8');assert(!text.includes(privateKey));assert(!text.includes('private-proxy-password'));assert(!text.includes('test-profile.conf'));
     await page.locator('[data-show="settings"]').click();await page.locator('#reset').click();
     await page.locator('[data-show="connect"]').click();
-    assert.deepEqual(errors,[]);await fs.mkdir('.build',{recursive:true});await page.screenshot({path:'.build/desktop.png',fullPage:true});
+    assert.deepEqual(errors,[]);await fs.mkdir('.build',{recursive:true});
+    // A hidden packaged Linux window can have no compositor frame under Xvfb.
+    // Only disposable CI may reveal it; local test runs stay hidden.
+    if(process.platform==='linux'&&process.env.GITHUB_ACTIONS==='true')await desktop.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].showInactive());
+    await page.screenshot({path:'.build/desktop.png',fullPage:true});
   }finally{await desktop.close();await fs.rm(temp,{recursive:true,force:true})}
 });
