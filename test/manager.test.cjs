@@ -24,6 +24,9 @@ test('direct fallback is explicit and healthy checks recover tunnel selection',a
   const {tunnel,requests}=fake('direct',false);await tunnel.checkHealth();assert.equal(tunnel.state.code,'DIRECT_FALLBACK');assert(requests.some(r=>r.body?.name==='DIRECT'));
   tunnel.delay=async()=>23;await tunnel.checkHealth();assert.equal(tunnel.state.code,'OUTBOUND_VERIFIED');assert(requests.some(r=>r.body?.name==='PocketTunnel'));
 });
+test('failed DNS checks never claim selected traffic was blocked or create a VPN group request',async()=>{
+  const {tunnel,requests}=fake('block',false);tunnel.session.options.mode='dns';await tunnel.checkHealth();assert.equal(tunnel.state.code,'DNS_UNVERIFIED');assert(!requests.some(r=>r.route==='/proxies/PocketRoute'));
+});
 test('disconnect disables TUN before cancelling the privileged session lease',async()=>{
   const stage=await fs.mkdtemp(path.join(os.tmpdir(),'pocket-disconnect-'));const lease=path.join(stage,'lease');await fs.writeFile(lease,'');
   const tunnel=new Tunnel('unused',()=>{},'unused');let released=false;

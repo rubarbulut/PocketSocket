@@ -22,6 +22,11 @@ function locks(){
   $('profile-controls').classList.toggle('hidden',model.settings.mode==='dns');
 }
 function showPanel(panel){currentPanel=panel;for(const name of ['connect','settings','help'])$('panel-'+name).classList.toggle('hidden',name!==panel);document.querySelectorAll('[data-show]').forEach(b=>b.classList.toggle('active',b.dataset.show===panel));window.scrollTo(0,0);}
+function routePreview(){
+  const chosen=new Set(model.settings.selected),mode=model.state.phase==='direct'?'direct':model.state.hasSession?model.state.mode:model.settings.mode;
+  $('route-apps').textContent=mode==='dns'?tr('dnsMode'):model.apps.filter(a=>chosen.has(a.id)).map(a=>a.title).join(', ')||tr('selectApps');
+  $('route-target').textContent=tr(['dns','direct'].includes(mode)?'direct':'tunnel');
+}
 function renderApps(){
   const term=$('app-search').value.toLowerCase(),chosen=new Set(model.settings.selected);
   $('apps').replaceChildren();
@@ -34,8 +39,7 @@ function renderApps(){
   }
   $('browser-warning').classList.toggle('hidden',!model.apps.some(a=>a.browser&&chosen.has(a.id)));
   $('selected-count').textContent=tr('appCount',{count:chosen.size});
-  $('route-apps').textContent=model.settings.mode==='dns'?tr('dnsMode'):model.apps.filter(a=>chosen.has(a.id)).map(a=>a.title).join(', ')||tr('selectApps');
-  $('route-target').textContent=tr(model.settings.mode==='dns'?'direct':'tunnel');
+  routePreview();
   locks();
 }
 function renderRecipes(){
@@ -49,7 +53,7 @@ function renderState(state){
   const rows=state.connections||[];$('connections').replaceChildren();
   for(const row of rows){const r=element('tr');for(const value of [row.app,row.destination,row.network,tr(row.route)])r.append(element('td',value));$('connections').append(r)}
   $('connection-count').textContent=tr('connectionCount',{count:rows.length});$('empty').classList.toggle('hidden',!!rows.length);
-  if(state.health)renderHealth(state.health);else $('health-results').classList.add('hidden');locks();
+  if(state.health)renderHealth(state.health);else $('health-results').classList.add('hidden');routePreview();locks();
 }
 function renderHealth(health){
   $('health-results').classList.remove('hidden');$('health-grid').replaceChildren();

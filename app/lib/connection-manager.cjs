@@ -111,13 +111,16 @@ class Tunnel {
       if(s.options.mode!=='dns') {
         const target=ok?'PocketTunnel':s.options.failurePolicy==='direct'?'DIRECT':'REJECT';
         await this.request('/proxies/PocketRoute',{method:'PUT',body:{name:target}});
+        if(this.session!==s||s.stopping)return;
         if(target!==s.route){
           const active=await this.request('/connections');
+          if(this.session!==s||s.stopping)return;
           // Never close DIRECT game/movie connections when a selected-app route changes.
           await Promise.allSettled((active.connections||[]).filter(c=>(c.chains||[]).includes('PocketRoute')&&/^[a-zA-Z0-9-]{1,80}$/.test(c.id||'')).slice(0,200).map(c=>this.request('/connections/'+encodeURIComponent(c.id),{method:'DELETE'})));
           s.route=target;
         }
       }
+      if(this.session!==s||s.stopping)return;
       const health={outbound:ok,discord:discordMs!==null,directMs,tunnelMs,discordMs,udpObserved:this.state.health?.udpObserved||false,checkedAt:new Date().toISOString()};
       const code=ok?(s.options.mode==='dns'?'DNS_ACTIVE':discordMs!==null?'OUTBOUND_VERIFIED':'DISCORD_UNREACHABLE'):s.options.mode==='dns'?'DNS_UNVERIFIED':s.options.failurePolicy==='direct'?'DIRECT_FALLBACK':'OUTBOUND_UNREACHABLE';
       this.emit({health,code});return health;
