@@ -12,7 +12,7 @@ const app = require('../package.json');
   if (!r.ok) throw new Error(`Source download failed: ${r.status}`);
   await fs.writeFile(path.join('dist', `mihomo-${version}-source.tar.gz`), Buffer.from(await r.arrayBuffer()));
   await fs.copyFile('THIRD_PARTY_NOTICES.md', 'dist/THIRD_PARTY_NOTICES.md');
-  const files = (await fs.readdir('dist')).filter(n => /\.(dmg|zip|tar\.gz)$/.test(n)).sort();
+  const files = (await fs.readdir('dist')).filter(n => /\.(dmg|zip|tar\.gz|exe|AppImage)$/.test(n)).sort();
   const lines = [];
   for (const name of files) {
     const digest = createHash('sha256').update(await fs.readFile(path.join('dist', name))).digest('hex');

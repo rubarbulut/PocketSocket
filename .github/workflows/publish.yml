@@ -1,0 +1,48 @@
+name: Publish verified beta
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: Successful Desktop packages run ID for this exact commit
+        required: true
+        type: string
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      POCKET_RELEASE_SIGNING_KEY: ${{ secrets.POCKET_RELEASE_SIGNING_KEY }}
+      RUN_ID: ${{ inputs.run_id }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Check source provenance and retrieve successful packages
+        shell: bash
+        run: |
+          [[ "$RUN_ID" =~ ^[0-9]+$ ]] || exit 1
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN_ID" > run.json
+          node -e 'const r=require("./run.json"); if(r.head_sha!==process.env.GITHUB_SHA || r.conclusion!=="success" || r.path!==".github/workflows/desktop.yml") process.exit(1)'
+          gh run download "$RUN_ID" --pattern 'PocketSocket-*' --dir artifacts
+          mkdir release
+          python3 - <<'PY'
+          import pathlib, shutil, hashlib
+          for file in pathlib.Path('artifacts').glob('*/*'):
+              if file.is_file() and file.name != 'SHA256SUMS.txt':
+                  target = pathlib.Path('release') / file.name
+                  if target.exists():
+                      assert hashlib.sha256(target.read_bytes()).digest() == hashlib.sha256(file.read_bytes()).digest(), file.name
+                  else:
+                      shutil.copy2(file, target)
+          PY
+      - run: node scripts/sign-release.cjs release
+      - name: Publish public beta and corresponding source
+        shell: bash
+        run: |
+          VERSION=$(node -p 'require("./package.json").version')
+          gh release create "v$VERSION" release/* --target "$GITHUB_SHA" --prerelease --title "PocketSocket $VERSION · Public beta" --notes-file docs/RELEASE_NOTES.md

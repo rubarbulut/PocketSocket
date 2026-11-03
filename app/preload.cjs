@@ -1,10 +1,10 @@
 'use strict';
-const { contextBridge, ipcRenderer } = require('electron');
-contextBridge.exposeInMainWorld('pocket', {
-  initial: () => ipcRenderer.invoke('initial'),
-  importProfile: () => ipcRenderer.invoke('import-profile'),
-  forgetProfile: () => ipcRenderer.invoke('forget-profile'),
-  connect: ids => ipcRenderer.invoke('connect', ids),
-  disconnect: () => ipcRenderer.invoke('disconnect'),
-  onState: callback => { ipcRenderer.on('state', (_event, state) => callback(state)); }
-});
+const {contextBridge,ipcRenderer,webUtils}=require('electron');
+const api={};
+const methods={initial:'initial',importProfile:'import-profile',addProxy:'proxy-add',removeProfile:'profile-remove',preferences:'preferences',resetPreferences:'reset-preferences',discoverApps:'apps-discover',addDiscoveredApp:'apps-add-discovered',chooseApp:'apps-choose',removeApp:'apps-remove',saveRecipe:'recipe-save',applyRecipe:'recipe-apply',deleteRecipe:'recipe-delete',connect:'connect',disconnect:'disconnect',health:'health',report:'report',checkUpdates:'updates-check',downloadUpdate:'updates-download',external:'external',visibility:'visibility'};
+for(const [method,channel]of Object.entries(methods))api[method]=(...args)=>ipcRenderer.invoke(channel,...args);
+api.importDropped=file=>ipcRenderer.invoke('import-path',webUtils.getPathForFile(file));
+api.onState=callback=>ipcRenderer.on('state',(_event,value)=>callback(value));
+api.onEvent=callback=>ipcRenderer.on('event',(_event,value)=>callback(value));
+api.onPanel=callback=>ipcRenderer.on('open-panel',(_event,value)=>callback(value));
+contextBridge.exposeInMainWorld('pocket',api);

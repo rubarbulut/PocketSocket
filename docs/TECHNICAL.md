@@ -1,36 +1,73 @@
-# PocketSocket · Teknik notlar
+# PocketSocket 0.2 · Technical notes
 
-[← Görsel kurulum rehberine dön](../README.md)
+[English guide](../README.en.md) · [Türkçe rehber](../README.md) · [Test matrix](TEST_MATRIX.md)
 
-## Sınırlar
+## Architecture
 
-- Varsayılan kural `DIRECT`; yalnızca seçilen Discord süreçleri VPN çıkışına yönlendirilir. Tarayıcıdaki Discord, tarayıcıyı seçmediğimiz için kapsanmaz.
-- macOS'ta trafik önce yerel TUN motoruna girer, ardından uygulama kuralına göre doğrudan veya WireGuard üzerinden çıkar. Oyun VPN sunucusundan geçirilmez; yerel motorun işlem yükü ve ortak internet hattının yoğunluğu yine gecikmeyi etkileyebilir. **Sıfır ping değişimi garantisi yoktur.**
-- DNS sorguları bağlantı süresince yerel motor tarafından yakalanır. Normal uygulamaların DNS çözümlemesi de etkilenebilir. IPv4 profillerinde AAAA yanıtları kapatılır; seçilen Discord süreçlerinin önbellekteki IPv6 bağlantıları doğrudan kaçmak yerine reddedilir. DNS-over-HTTPS kullanan diğer uygulamalar kendi yöntemlerini sürdürebilir.
-- Uygulama tanıma başarısızsa varsayılan doğrudan bağlantı kullanılır. Bu beta gizlilik amaçlı bir kill switch değildir. Bağlantı ekranında Discord'un gerçekten `Tünel` göründüğünü doğrula.
-- Standart, tek peer ve IPv4 internet çıkışı olan profiller desteklenir. Çift yığın profilleri de desteklenir. `PostUp`, `PreDown` gibi komutlar ve AmneziaWG'ye özgü alanlar reddedilir. `ListenPort` doğrulanır ama uygulanmaz; DNS alanı doğrulanır, çözümleyici olarak yerel motorun DoH ayarları kullanılır. Bu sürüm özel ağ/split AllowedIPs profilleri için değildir.
-- Profil kalıcı kaydedilmez; her açılışta yeniden aktarılır. Anahtarlar yalnızca ana süreç belleğinde ve oturumun geçici 0600 dosyalarında tutulur. Canlı hedef adresleri yalnızca yerel arayüzde gösterilir, dışarı gönderilmez.
+Electron renderer → fixed IPC methods → validated settings/profiles → pinned Mihomo → session-limited platform supervisor → TUN and selected-process/path routing.
 
-## Geliştirme
+The renderer is sandboxed with context isolation and no Node integration. Navigation/new windows and permissions are denied. IPC verifies the sender and exact main frame URL. Imported configuration text is never shell code. Custom app rules reject commas/control characters and use validated executable/bundle paths. Shared system helpers may require additional matching; unrecognized traffic is direct.
 
-Node.js 24 ve macOS 13+:
+Mihomo listens for controller requests on a random loopback port with a random bearer token. No general-purpose inbound proxy port is opened. Selected traffic goes to `PocketRoute`, whose options are the imported outbound, REJECT and (only if explicitly chosen) DIRECT. Other traffic ends in `MATCH,DIRECT`.
+
+Health changes close only connections whose chain contains `PocketRoute`; they must never issue a global connection-delete request. Selected-outbound HTTP tests bypass the selected group so an unhealthy/blocked route can be tested and recovered. Discord HTTPS, generic HTTP access and observed UDP flows are different signals; none alone proves voice quality.
+
+## Platform helpers
+
+- **macOS:** OS administrator dialog launches a session shell; the engine/config/supervisor are copied into a root-only temporary directory, the copied binary is hashed, and a parent identity + lease watchdog owns the child. The bundle uses a free ad-hoc code signature. Paid Developer ID and notarization are not configured.
+- **Windows:** a hidden PowerShell launcher asks for UAC only on a user-started connection (or explicitly enabled startup connection). Data and bundled script source travel as base64 arguments, not interpolated profile fields. The elevated helper creates an administrator/SYSTEM-owned ProgramData session directory, verifies the binary hash, tracks the GUI creation time/lease and owns only its child process. User staging has explicit private ACLs. The GUI first requests TUN disable before ending the lease. The application is not a permanent Windows routing service and has no paid publisher certificate.
+- **Linux:** PolicyKit `/usr/bin/pkexec` launches a root-only temporary session with the same hash, parent and heartbeat checks. A working desktop authentication agent is required. AppImage and tar.gz are offered. Optional login launch is currently exposed on Mac/Windows only.
+
+Helpers must be actual files in `resources/helpers`, not hidden in ASAR. No helper installs a permanent boot daemon. Normal cleanup removes session files; power loss may leave restricted directories. Heartbeat expiry can take roughly 15–22 seconds. Selected-app rejection applies only while the engine runs; this is not an OS-persistent crash-proof kill switch.
+
+## Modes and DNS
+
+Tunnel mode supports standard single-peer WireGuard internet profiles and localhost SOCKS5 (UDP opt-in). `PostUp`, `PreDown` and nonstandard protocol fields are rejected. `ListenPort` is validated but not applied. WireGuard DNS fields are validated; configured encrypted resolvers are used for the local DNS engine. IPv4-only tunnel profiles suppress AAAA resolution and reject cached selected-app IPv6 connections rather than sending them direct.
+
+DNS mode contains no VPN outbound and ends every flow in DIRECT; it changes how intercepted device DNS is resolved. DNS interception is not app-isolated. Existing DNS-over-HTTPS applications can use their own method. Windows strict routing is used for the core’s DNS behavior and can conflict with other virtual-network software.
+
+Smart detection tests Discord HTTPS using the system path, then a Cloudflare-resolved address with proper TLS hostname verification, before selecting DNS mode or the imported profile. These probes are not voice tests and do not defeat every network restriction.
+
+## Profiles, privacy and updates
+
+Profile material is encrypted with Electron OS-backed safeStorage before persistence. Plaintext Linux fallback is refused. Protected-store unavailability means session-only profiles. Native encryption semantics differ on Mac and Windows; this is not protection against a fully compromised user/admin account. See [PRIVACY.md](PRIVACY.md).
+
+Updates are checked on user request against public GitHub Releases. An Ed25519 public key is pinned in the app; the matching private key is an ignored local file and a GitHub Actions secret. Verified manifests list exact installer size and SHA-256. Downloaded installers are checked before being renamed to the user-selected final path. No unsigned/forged update is offered, and no automatic installer execution occurs. This release signature is independent from OS publisher signing. Earlier signed releases provide a manual rollback path.
+
+The publish workflow accepts only a successful Desktop packages run at the exact checked-out commit. It merges matching artifacts, includes corresponding app/core source, signs the manifest and publishes a public beta. The static GitHub Pages download page has no build/runtime backend or analytics.
+
+## Development
+
+Node.js 24:
 
 ```sh
 npm ci
 npm run core:fetch
-npm test
+npm run test:unit
 npm run core:check
 npm start
 ```
 
-Paketlemek için `npm run build:mac -- --arm64` veya `--x64`. Çekirdek mimarisi hedefle eşleşmeli: `npm run core:fetch -- darwin-arm64` veya `darwin-x64`. GitHub Actions her iki mimaride test edip `.dmg` ve `.zip` üretir. İlk yükleme için gerçek Apple sertifikası/noter onayı ayrı bir sonraki adımdır.
+`npm test` also launches actual Electron UI tests in hidden windows with an isolated settings directory. On Linux a graphical session/Xvfb is needed. `npm run test:headless` uses an installed Chrome/Chromium (or Playwright browser) and a clearly mocked backend to validate the renderer and capture initial-state previews; it does not establish IPC, privilege or network behavior.
 
-Windows'ta arayüz ve profil/çekirdek doğrulama testleri çalışır; tünel başlatılmaz. `npm run core:check` gerçek motoru **TUN kapalı** çalıştırır; geliştirici/CI makinesinin yönlendirmesini değiştirmez. Yetkili TUN oturumunun gerçek cihaz testi için [Mac test rehberi](MAC_TEST.md) kullanılır.
+```sh
+npm run build:mac -- --arm64
+npm run build:win -- --x64
+npm run build:linux -- --x64
+```
 
-## Mimari
+Fetch the matching target core first (`darwin-arm64`, `darwin-x64`, `win32-x64`, `linux-x64`). The fetcher checks a pinned compressed-asset SHA-256, applies an ad-hoc Mac signature and prepares the correct bundle directory. ARM Windows/Linux core entries exist, but native packaged releases for those targets are not in the current tested matrix.
 
-Electron arayüzü → sınırlı IPC → doğrulanan WireGuard profili → sabit sürümlü Mihomo → macOS TUN + süreç kuralları. Arayüzde Node erişimi kapalı, sandbox/context isolation etkin; controller yalnızca loopback'te rastgele port ve oturuma özel bearer ile dinler. Genel bir proxy portu açılmaz.
+The privileged `check-supervisor.cjs` test refuses to run outside disposable GitHub Actions runners. It alters only that runner’s temporary routing. Do not remove this guard to test on a machine with an active game/network session.
 
-Yönetici izni yalnızca oturumluk motoru çalıştırmak içindir. Motor/config özel root dizinine kopyalanır; kopya motorun hash'i kontrol edilir. Root supervisor, GUI kimliğini ve 15 saniyelik heartbeat'i izler. Kapanış/çöküşte kendi alt sürecini durdurur; oturum dizini temizlenir. Kalıcı launch daemon veya açılış servisi kurulmaz; sistem DNS tercihleri değiştirilmez. GUI zorla kapatılırsa cleanup için yaklaşık 15–22 saniye gerekebilir.
+## Boundaries
 
-Mihomo indirmeleri sürüm ve SHA-256 ile sabitlenir. Lisans: GPL-3.0-only. Bileşenler ve kaynak için [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md).
+- Provider links are setup guides; there is no universal VPN-client control API or provider login integration.
+- No bundled free account, owned VPN server, browser-tab-only routing, iOS/Android client or OS-persistent kill switch.
+- No paid signing/notarization, paid hosting or mandatory backend. Standard public-repository CI and GitHub Pages/Releases are used; service quotas still apply.
+- No anonymity, guaranteed unblock, stable ping or verified voice claim. Real-world provider/ISP/device checks remain necessary.
+- Core/source notices remain included under the project’s GPL-3.0 license; free distribution does not remove those obligations.
+
+## Additional-platform feasibility
+
+Browser-tab isolation needs a browser-specific design and separate WebRTC/UDP validation. Android/iOS require their native VPN frameworks and their platform-specific app-routing/distribution restrictions. They are separate engineering work, not desktop build flags. This desktop release does not present those as working features.

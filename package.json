@@ -1,7 +1,10 @@
 {
   "name": "pocketsocket",
-  "version": "0.1.0",
-  "description": "Seçtiğin uygulama tünelden, geri kalanı kendi bağlantından.",
+  "version": "0.2.0",
+  "description": "Your apps. Your routes. Free selected-app routing for Windows, macOS and Linux.",
+  "author": "PocketSocket contributors",
+  "homepage": "https://rubarbulut.github.io/PocketSocket/",
+  "repository": { "type": "git", "url": "https://github.com/rubarbulut/PocketSocket.git" },
   "private": true,
   "license": "GPL-3.0-only",
   "main": "app/main.cjs",
@@ -12,7 +15,11 @@
     "test:ui": "node --test test/ui.test.cjs",
     "core:fetch": "node scripts/fetch-core.cjs",
     "core:check": "node scripts/check-core.cjs",
-    "build:mac": "electron-builder --mac zip dmg --publish never"
+    "build:mac": "electron-builder --mac zip dmg --publish never",
+    "build:win": "electron-builder --win nsis portable --publish never",
+    "build:linux": "electron-builder --linux AppImage tar.gz --publish never",
+    "test:unit": "node --test test/routing.test.cjs test/features.test.cjs test/manager.test.cjs",
+    "test:headless": "node scripts/check-ui-headless.cjs"
   },
   "devDependencies": {
     "electron": "45.2.1",
@@ -22,20 +29,25 @@
   "build": {
     "appId": "app.pocketsocket.desktop",
     "productName": "PocketSocket",
+    "icon": "app/ui/icon.png",
     "asar": true,
     "files": ["app/**/*", "LICENSE", "THIRD_PARTY_NOTICES.md", "package.json"],
     "extraResources": [
-      { "from": "vendor/darwin-${arch}/mihomo", "to": "core/mihomo" },
-      { "from": "app/supervisor.sh", "to": "helpers/supervisor.sh" },
+      { "from": "vendor/bundle-${arch}", "to": "core" },
+      { "from": "app", "to": "helpers", "filter": ["supervisor.sh", "supervisor-linux.sh", "supervisor.ps1"] },
       { "from": "vendor/LICENSE.mihomo", "to": "core/LICENSE.mihomo" }
     ],
     "mac": {
       "category": "public.app-category.utilities",
       "minimumSystemVersion": "13.0",
-      "identity": null,
+      "identity": "-",
       "hardenedRuntime": false,
       "artifactName": "PocketSocket-${version}-mac-${arch}.${ext}"
     },
-    "dmg": { "title": "PocketSocket", "sign": false }
+    "dmg": { "title": "PocketSocket", "sign": false },
+    "win": { "target": ["nsis", "portable"], "artifactName": "PocketSocket-${version}-win-${arch}.${ext}", "signAndEditExecutable": false },
+    "nsis": { "oneClick": true, "perMachine": false, "runAfterFinish": false, "deleteAppDataOnUninstall": true },
+    "portable": { "artifactName": "PocketSocket-${version}-win-${arch}-portable.${ext}" },
+    "linux": { "target": ["AppImage", "tar.gz"], "category": "Network", "artifactName": "PocketSocket-${version}-linux-${arch}.${ext}" }
   }
 }

@@ -39,10 +39,10 @@ test('rejects scripts, custom keys, duplicate peers, bad keys, ports and partial
   ]) assert.throws(() => parseWireGuard(text));
 });
 test('default direct route and no domain rules keep other applications off the VPN', () => {
-  const config = buildConfig(parseWireGuard(profile), ['discord'], 49150, 'a'.repeat(64));
+  const config = buildConfig(parseWireGuard(profile), ['discord'], 49150, 'a'.repeat(64),{platform:'darwin'});
   assert.equal(config.rules.at(-1), 'MATCH,DIRECT');
-  assert(config.rules.includes('PROCESS-NAME,Discord,PocketTunnel'));
-  assert(config.rules.includes('PROCESS-NAME,Discord Helper (Renderer),PocketTunnel'));
+  assert(config.rules.includes('PROCESS-NAME,Discord,PocketRoute'));
+  assert(config.rules.includes('PROCESS-NAME,Discord Helper (Renderer),PocketRoute'));
   assert(!config.rules.some(r => r.includes('League') || r.includes('DOMAIN')));
   assert(config.rules.includes('AND,((PROCESS-NAME,Discord),(IP-CIDR6,::/0)),REJECT'));
   assert.equal(config['external-controller'], '127.0.0.1:49150');
@@ -56,7 +56,7 @@ test('does not accept arbitrary process/rule injection or empty selection', () =
 });
 test('diagnostics omit connection identifiers and imported key material', () => {
   const rows = summarizeConnections({ connections: [{ id: 'secret-id', metadata: { process: 'Discord', host: 'discord.com', network: 'udp', sourceIP: '192.168.1.2' }, chains: ['PocketTunnel'] }] });
-  assert.deepEqual(rows, [{ app: 'Discord', destination: 'discord.com', network: 'udp', route: 'Tünel' }]);
+  assert.deepEqual(rows, [{ app: 'Discord', destination: 'discord.com', network: 'udp', route: 'tunnel',upload:0,download:0 }]);
 });
 test('privileged launcher quotes paths and validates privileged parameters', () => {
   assert.equal(shellQuote("/Users/a'b/$stuff`cmd`"), "'/Users/a'\\''b/$stuff`cmd`'");

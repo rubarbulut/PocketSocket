@@ -1,0 +1,86 @@
+name: Desktop packages
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths-ignore: ['docs/**', 'README*.md', 'CHANGELOG.md']
+permissions:
+  contents: read
+concurrency:
+  group: desktop-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    name: ${{ matrix.platform }} ${{ matrix.arch }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            platform: darwin
+            arch: arm64
+            command: npm run build:mac -- --arm64
+            prefix: ''
+          - runner: macos-15-intel
+            platform: darwin
+            arch: x64
+            command: npm run build:mac -- --x64
+            prefix: ''
+          - runner: windows-latest
+            platform: win32
+            arch: x64
+            command: npm run build:win -- --x64
+            prefix: ''
+          - runner: ubuntu-24.04
+            platform: linux
+            arch: x64
+            command: npm run build:linux -- --x64
+            prefix: xvfb-run -a
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 25
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Linux desktop dependencies
+        if: runner.os == 'Linux'
+        run: sudo apt-get update -qq && sudo apt-get install -y libgtk-3-0 libnss3 libasound2t64 libgbm1 libsecret-1-0 libfuse2 xvfb
+      - run: npm ci
+      - run: npm run core:fetch -- ${{ matrix.platform }}-${{ matrix.arch }}
+      - name: Unit tests and real Electron UI
+        run: ${{ matrix.prefix }} npm test
+      - run: npm run core:check
+      - name: Compile Mac authorization script
+        if: runner.os == 'macOS'
+        run: node scripts/check-applescript.cjs
+      - name: Exercise privileged TUN startup and cleanup on disposable runner
+        run: node scripts/check-supervisor.cjs
+      - name: Package application
+        run: ${{ matrix.command }}
+      - name: Verify packaged resources and real application
+        run: ${{ matrix.prefix }} node scripts/check-package.cjs
+      - run: node scripts/package-source.cjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PocketSocket-${{ matrix.platform }}-${{ matrix.arch }}
+          path: |
+            dist/*.dmg
+            dist/*.zip
+            dist/*.exe
+            dist/*.AppImage
+            dist/*.tar.gz
+            dist/THIRD_PARTY_NOTICES.md
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: UI-check-${{ matrix.platform }}-${{ matrix.arch }}
+          path: .build/desktop.png
+          if-no-files-found: ignore

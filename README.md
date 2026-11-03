@@ -1,155 +1,122 @@
-<p align="center">
-  <img src="docs/images/hero.svg" alt="PocketSocket: seçtiğin Discord uygulaması VPN tünelinden, oyun ve diğer uygulamalar doğrudan internetten çıkar." width="100%">
-</p>
+<p align="center"><img src="docs/images/hero.svg" alt="PocketSocket: seçtiğin uygulamalar tünelden, diğerleri doğrudan internetten." width="100%"></p>
+<p align="center"><strong>Ücretsiz · Açık kaynak · Windows / macOS / Linux · Türkçe / English</strong></p>
+<p align="center"><a href="README.en.md">English</a> · <a href="https://rubarbulut.github.io/PocketSocket/"><strong>📥 İNDİR</strong></a> · <a href="#ilk-bağlantı">🟢 Bağlan</a> · <a href="#açılmıyor-mu">🛟 Yardım</a></p>
 
-<p align="center">
-  <strong>Discord’u seç. Bağlan. Diğer uygulamalar kendi bağlantısından devam etsin.</strong>
-</p>
+> **Public beta:** PocketSocket sunucu veya VPN hesabı vermez. Tünel için kendi WireGuard profilini veya uyumlu bir **yerel SOCKS5 proxy** getirirsin. Ücretsiz DNS modu da vardır; her erişim engelini aşmaz.
 
-<p align="center">
-  <a href="#1--macine-uygun-paketi-indir">📥 İndir</a> ·
-  <a href="#2--kur">📦 Kur</a> ·
-  <a href="#3--discordu-bağla">🟢 Bağlan</a> ·
-  <a href="#açılmıyor-mu">🛟 Açılmıyor mu?</a>
-</p>
+## 1 · Cihazını seç
 
-> **Başlamak için iki şey gerekiyor:** macOS 13 veya üzeri bir Mac ve VPN sağlayıcından alınmış bir **WireGuard `.conf` dosyası**.
->
-> PocketSocket sunucu veya VPN hesabı vermez. Bu sürüm yalnızca DNS değiştirerek çalışmaz.
+**[İndirme sayfasını aç →](https://rubarbulut.github.io/PocketSocket/)** GitHub’a giriş yapman gerekmez. [Tüm yayın dosyaları, kaynak ve SHA256SUMS](https://github.com/rubarbulut/PocketSocket/releases).
 
-## 1 · Mac’ine uygun paketi indir
+| Cihaz | Paket |
+| --- | --- |
+| **MacBook Neo / A18 Pro** veya M serisi Mac | **mac-arm64.dmg** |
+| Intel Mac | **mac-x64.dmg** |
+| Windows 11 · x64 | **win-x64.exe**; ayrıca portable EXE |
+| Masaüstü Linux · x64 | **linux-x64.AppImage**; ayrıca tar.gz |
 
-![Paket seçimi: MacBook Neo A18 Pro ve M serisi Mac için arm64; Intel işlemcili Mac için x64.](docs/images/choose-mac.svg)
-
-**MacBook Neo / M serisi → arm64. Intel → x64.**
-
-İşlemcini bilmiyor musun? **Apple menüsü → Bu Mac Hakkında** ekranına bak.
-
-<p align="center">
-  <a href="https://github.com/rubarbulut/PocketSocket/actions/workflows/macos.yml"><strong>📥 İNDİRME SAYFASINI AÇ</strong></a>
-</p>
-
-![GitHub’dan indirme: Actions içinde macOS beta'yı aç, yeşil tikli çalışmayı seç, sayfanın altındaki Artifacts bölümüne in, arm64 veya x64 PocketSocket paketini indir.](docs/images/download.svg)
-
-**Yeşil tikli** bir çalışmayı aç. Altındaki **Artifacts** bölümünden görseldeki paketini seç. `UI-check` dosyaları uygulama değildir.
-
-<details>
-<summary>İndirme görünmüyor mu? / Dosyayı arkadaşına mı göndereceksin?</summary>
-
-Repo private olduğu için GitHub’a giriş ve repo erişimi gerekir. Erişimi olmayan arkadaşına indirdiğin arşivi kendin gönderebilirsin. Kaynak kod ve lisans dosyalarını da arşivin içinde bırak.
-
-GitHub bu indirmeleri 14 gün saklar. Süresi dolmuşsa **macOS beta → Run workflow** ile yeni paket üretilebilir; bu seçenek repo yetkisi ister.
-
-</details>
+Mac için macOS 13+, Linux yönlendirmesi için PolicyKit ve masaüstü izin aracısı gerekir. Bu sürüm iPhone/Android uygulaması değildir.
 
 ## 2 · Kur
 
-![Kurulum: indirdiğin ZIP’i aç, içindeki DMG’ye çift tıkla, PocketSocket’i Applications klasörüne sürükle ve Applications içinden aç.](docs/images/install.svg)
+**Mac:** DMG’yi aç → PocketSocket’i Applications’a taşı → aç.
 
-**ZIP’i aç → DMG’yi aç → PocketSocket’i Applications’a taşı → uygulamayı aç.**
+![Mac kurulumu: DMG'yi aç, PocketSocket'i Applications'a taşı, uygulamayı aç.](docs/images/install.svg)
 
-“Hasarlı” veya “geliştirici doğrulanamıyor” diyorsa [açılış çözümüne geç](#açılmıyor-mu).
+**Windows:** EXE’yi aç → kur. Portable sürümü kullanıyorsan dosyayı kalıcı bir klasöre koy.
 
-## 3 · Discord’u bağla
+**Linux:** AppImage’a çalıştırma izni ver → aç. FUSE yoksa tar.gz arşivini açıp içindeki `pocketsocket` dosyasını çalıştır.
 
-![Dört adım: WireGuard .conf dosyanı seç, Discord’u işaretle, Bağlan’a bas ve macOS iznini onayla, Discord’u Command Q ile tamamen kapatıp yeniden aç.](docs/images/connect.svg)
+**İlk açılışta** kısa rehberi tamamla. Dil ve açık/koyu tema **Ayarlar** bölümündedir.
 
-1. **WireGuard dosyasını seç** → kendi `.conf` dosyanı aç.
-2. **Discord** kutusunu işaretle. PTB veya Canary kullanıyorsan onu seç.
-3. **Bağlan** → macOS’un yönetici izin penceresini onayla.
-4. Discord’u **⌘ + Q** ile tamamen kapat. Tekrar aç ve **ses kanalına gir**.
+## İlk bağlantı
 
-Bağlamadan önce diğer VPN uygulamalarını kapat; aynı anda çalışan başka bir VPN yönlendirmeyi etkileyebilir.
+![Profil seç, uygulamanı işaretle, Bağlan'a bas, uygulamanı kapatıp yeniden aç.](docs/images/connect.svg)
 
-<details>
-<summary>📄 .conf dosyam yok. Nereden alacağım?</summary>
+1. **Yöntemi seç:** uygulama tüneli, şifreli DNS veya akıllı algılama.
+2. **Bağlantını ekle:** WireGuard `.conf` dosyasını seç/sürükle ya da yerel SOCKS5 bilgilerini gir.
+3. **Uygulamalarını seç:** Discord, Telegram, Signal, Slack ve tarayıcı seçenekleri hazır. **Yüklü uygulamaları bul** veya **Uygulama seç** ile başka uygulama ekleyebilirsin.
+4. **Bağlan** → sistemin yönetici iznini onayla → seçilen uygulamayı yeniden aç. Discord’da mesaj, ses ve mikrofonu ayrı ayrı dene.
 
-Kullandığın VPN sağlayıcısının hesabında **WireGuard**, **manuel kurulum** veya **yapılandırma indir** bölümünü ara. Dosya adı genellikle `.conf` ile biter.
+![PocketSocket 0.2 Türkçe başlangıç arayüzü önizlemesi; aktif VPN bağlantısı göstermez.](docs/images/app-v2-tr.png)
 
-Her sağlayıcı ve her ücretsiz plan bu dosyayı vermez. Rastgele internetten bulduğun bir profil yerine kendi sağlayıcının verdiğini kullan. Dosyanın içinde özel anahtarın bulunur; kimseyle paylaşma.
+**Canlı bağlantılar:** seçtiğin uygulamalarda **Tünel**, diğerlerinde **Doğrudan** görmelisin. Tarayıcı seçimi **tüm tarayıcıyı** etkiler; yalnızca Discord sekmesini seçmiş olmazsın.
 
-PocketSocket bu ilk sürümde başka bir VPN uygulamasını otomatik yönetmez; sağlayıcının dosyasıyla kendi bağlantısını kurar. Ayrı WireGuard uygulaması, Node.js veya Homebrew kurmana gerek yok.
+<details><summary>📄 WireGuard dosyam yok. Nereden alırım?</summary>
+
+Sağlayıcının hesabında **WireGuard / manuel kurulum / yapılandırma indir** bölümünü ara. Uygulama içindeki **Profil dosyasını nereden alırım?** bağlantısı kurulum sayfalarını gösterir. Her sağlayıcı veya ücretsiz plan bu dosyayı sunmaz; PocketSocket bu sınırı kaldırmaz. Bunlar hesap entegrasyonu veya sponsorlu öneri değildir.
+
+`.conf` dosyasında özel anahtarın vardır: **paylaşma**. Script veya standart dışı protokol alanı olan profiller kabul edilmez.
 
 </details>
 
-### Uygulamada göreceğin ekran
+<details><summary>🔌 Mevcut VPN uygulamamla kullanabilir miyim?</summary>
 
-![PocketSocket’in uygulama kodundan oluşturulmuş başlangıç önizlemesi. Solda WireGuard dosyası seçilir, sağda Discord işaretlenir, alttaki Bağlan düğmesiyle yönlendirme başlatılır.](docs/images/app-preview.png)
+Uygulama bir **localhost SOCKS5 proxy** sunuyorsa yerel proxy olarak ekleyebilirsin. O uygulama açık kalmalı; Discord sesi için UDP desteğini de o sağlamalıdır. Kutuyu işaretlemek UDP desteği eklemez. Diğer uygulamaların doğrudan kalması için sağlayıcının cihaz genelindeki VPN tünelini kapatıp yalnız proxy yöntemini kullanman gerekebilir. Her VPN uygulaması bu yöntemi desteklemez.
 
-*Uygulama kodundan alınmış örnek başlangıç ekranı; aktif VPN bağlantısı göstermez. Diğer görseller adımları anlatan şemalardır.*
+</details>
 
-## 4 · Çalıştığını kontrol et
+## Üç bağlantı yöntemi
 
-**Canlı bağlantılar** bölümünü aç. Yeni bağlantılarda şu yolları görmelisin:
+| Yöntem | Ne yapar? |
+| --- | --- |
+| **Seçilen uygulamalara tünel** | Seçtiğin uygulamaları kendi profilinden, diğerlerini doğrudan çıkarır. |
+| **Şifreli DNS** | Cihazın DNS trafiğini yerel motor üzerinden şifreli çözümleyiciye gönderir. Ülkeni değiştirmez. |
+| **Akıllı algılama** | Discord HTTPS erişimini önce doğrudan, sonra şifreli DNS ile dener; gerekirse profilini kullanır. Sesin çalıştığını kanıtlamaz. |
 
-| 💬 Discord | 🎮 Oyun / film / diğer uygulamalar |
-| :---: | :---: |
-| **Tünel** | **Doğrudan** |
+**DNS modu cihaz genelini etkiler.** Tünel modunda da yerel TUN motoru ve DNS yakalama çalışır. DNS sunucusu, yerel işlem yükü ve ortak internet hattının yoğunluğu diğer uygulamaların gecikmesini etkileyebilir. **Sıfır ping değişimi garantisi yoktur.**
 
-**Mesaj gönder → ses kanalına gir → mikrofonu dene.** Bitirdiğinde **Bağlantıyı kes** düğmesine bas.
+## Kontrol et, tahmin etme
 
-> **“Yönlendirme etkin” yazısı tek başına Discord’un çalıştığını göstermez.** Gerçek sunucu erişimini ve sesi yukarıdaki adımlarla dene. Türkiye’de erişim ve oyun ping’i henüz gerçek kullanıcı bağlantısında doğrulanmadı.
+**Bağlantıyı kontrol et** gerçek profil çıkışını ve Discord HTTPS erişimini ayrı kontrol eder. Doğrudan/profil gecikmesi **HTTP testidir, oyun ping’i değildir**. UDP trafiği görülmesi mikrofon veya ses kalitesinin doğrulandığı anlamına gelmez.
+
+Türkiye’de belirli sağlayıcı/ISS’lerde erişim, gerçek Discord sesi, ekran paylaşımı ve oyun gecikmesi için [gerçek cihaz test rehberi](docs/MAC_TEST.md) kullanılmalı. CI testleri bunları kanıtlamaz.
 
 ## Açılmıyor mu?
 
-![Mac uygulamayı engellerse: Sistem Ayarları, Gizlilik ve Güvenlik, Yine de Aç. Hasarlı uyarısı devam ederse aşağıdaki adımları uygula.](docs/images/permission.svg)
+### Mac · “Hasarlı” / “Geliştirici doğrulanamıyor”
 
-### “Geliştirici doğrulanamıyor” / “Uygulama hasarlı”
+Bu ücretsiz yayında **ücretli Apple Developer ID veya noter onayı yok**. 0.2 Mac paketi ücretsiz ad-hoc bütünlük imzasıyla hazırlanır; bu Apple’ın yayıncı kimliğimizi doğruladığı anlamına gelmez.
 
-Bu beta henüz Apple Developer sertifikasıyla imzalı ve noter onaylı değil. macOS indirme veya imza nedeniyle engelleyebilir; **her “hasarlı” uyarısının nedeni aynı değildir.**
-
-1. Uygulama **Applications / Uygulamalar** klasöründe olsun.
-2. Bir kez açmayı dene, sonra **Sistem Ayarları → Gizlilik ve Güvenlik → Yine de Aç** seçeneğine bak. [Apple’ın açılış rehberi](https://support.apple.com/en-us/102445).
-3. Uyarı sürüyorsa, **kaynağını doğruladığın PocketSocket test paketi için** Terminal’i aç, aşağıdaki satırı yapıştır ve Enter’a bas:
+1. Applications’a taşı ve bir kez açmayı dene.
+2. **Sistem Ayarları → Gizlilik ve Güvenlik → Yine de Aç** bölümünü kontrol et. [Apple rehberi](https://support.apple.com/en-us/102445).
+3. Kaynağını doğruladığın PocketSocket kopyası için gerekirse Terminal’de:
 
 ```sh
 xattr -rd com.apple.quarantine "/Applications/PocketSocket.app"
 ```
 
-4. PocketSocket’i tekrar aç.
+Yalnızca bu uygulamanın indirme karantinası kaldırılır. Bozuk dosya veya geçersiz imza onarılmaz. Hata sürerse tam hata metnini bildir.
 
-Bu komut yalnızca bu uygulamanın indirme karantinasını kaldırır; bozuk dosyayı veya geçersiz imzayı onarmaz. Hata devam ederse **tam hata metnini** ve Mac modelini [sorun bildirirken](https://github.com/rubarbulut/PocketSocket/issues) yaz. `.conf` dosyanı veya özel anahtarını ekleme.
+### Windows · Güven uyarısı
 
-<details>
-<summary>🟢 Bağlan düğmesi neden pasif?</summary>
+Yayını ve **SHA256SUMS** dosyasını doğrula. SmartScreen **Daha fazla bilgi → Yine de çalıştır** sunuyorsa yalnız doğruladığın kopya için kullan. Smart App Control veya yönetici politikası imzasız dosyayı yine de engelleyebilir. **Cihaz genelindeki korumayı kapatmanı istemiyoruz.**
 
-Önce geçerli bir `.conf` dosyası aktar ve en az bir Discord sürümünü seç. Tünel bu sürümde yalnızca macOS’ta çalışır.
+### Linux · Başlatma / izin sorunu
 
-</details>
+AppImage’a çalıştırma izni ver. FUSE yoksa arşiv paketini kullan. Yönetici izni için `/usr/bin/pkexec` ve çalışan masaüstü izin aracısı gerekir. Sistem anahtarlığı yoksa profiller kalıcı kaydedilmez; yalnız oturumda tutulur.
 
-<details>
-<summary>💬 Discord açılıyor ama ses çalışmıyor.</summary>
+Bu adımlar uygulama içindeki **Yardım** bölümünde de var.
 
-Doğru Discord sürümünün seçili olduğunu kontrol et. Discord’u **⌘ + Q** ile kapatıp aç. **Canlı bağlantılar** bölümünde Discord’un `Tünel` yolunu kullandığını kontrol et. Profilin ve sunucun UDP trafiğini desteklemeli; uygulamanın açılması tek başına sesin de çalışacağını göstermez.
+## Günlük kullanım
 
-</details>
+- **TR/EN ve tema:** sistem dili, Türkçe/İngilizce, sistem/açık/koyu görünüm.
+- **Güvenli profil kaydı:** işletim sistemi şifrelemesi, çoklu profil; güvenli depo yoksa oturumluk kullanım.
+- **Uygulama seçimleri:** arama, keşif, elle ekleme ve isim vererek seçim kaydetme.
+- **Tepsi/menü çubuğu:** bağlan/kes, ayarlar ve çıkış. Pencere kapanınca devam etmek isteğe bağlıdır.
+- **Başlangıç:** Mac/Windows’ta oturum açılışı; uygulama açıldığında bağlanma isteğe bağlıdır ve sistem izin penceresi gösterebilir.
+- **Toparlanma:** motor çalışırken ağ değişikliği/uyanma kontrolleri ve çıkış yeniden denemeleri. Motor durduğunda arkada yeni yönetici penceresi açılmaz; tekrar **Bağlan**’a basarsın.
+- **Sunucu hatası:** motor çalışırken seçilen uygulamayı engelle veya açık tercihinle doğrudan devam et. Doğrudan devam normal IP’ni gösterebilir.
+- **Güncelleme:** kararlı/beta kanalı, sabit public key ile imzalı manifest ve dosya sağlaması doğrulama. İndirilen kurulumu uygun olduğunda kendin başlatırsın; oyun sırasında yeniden başlatma yapılmaz. [Önceki sürümler](https://github.com/rubarbulut/PocketSocket/releases).
 
-<details>
-<summary>🎮 Oyunumun ping’i kesin aynı mı kalır?</summary>
+**Bu sürümde motor çökünce korumayı sürdüren bir işletim sistemi kill switch’i yok.** Motor kapanınca normal yönlendirme geri döner. Uygulama tanınamazsa trafik doğrudan çıkabilir; canlı bağlantılarla kontrol et. Ortak sistem yardımcıları kullanan uygulamalarda özel kurallar gerekebilir.
 
-Oyun trafiği VPN sunucusuna gönderilmez. Ama yerel motorun yükü, DNS çözümlemesi ve aynı internet hattını kullanan indirme/yayınlar gecikmeyi etkileyebilir. **Sıfır ping değişimi garantisi yok.**
+## Gizlilik ve destek
 
-</details>
+PocketSocket analiz verisi veya gezinme geçmişi toplamaz. Profiller cihazında kalır. Bağlantı testleri Discord ve Google bağlantı test adresine; akıllı DNS algılama ayrıca Cloudflare’a ulaşır. Güncelleme kontrolü GitHub’a yapılır. [Gizlilik ayrıntıları](docs/PRIVACY.md).
 
-<details>
-<summary>🌐 Tarayıcıdaki Discord da kapsanıyor mu?</summary>
-
-Bu sürüm Discord’un Mac uygulamalarını seçer. Tarayıcıdaki Discord kapsanmaz. Sadece DNS değiştirmek de her bağlantıda Discord’a erişmek için yeterli olmayabilir.
-
-</details>
-
-<details>
-<summary>🔑 Uygulamayı yeniden açınca neden dosyayı tekrar seçiyorum?</summary>
-
-Profil bu sürümde kalıcı kaydedilmez. Uygulamayı her açtığında yeniden içe aktarırsın. Yönetici parolanı PocketSocket toplamaz; izni macOS’un kendi penceresinde verirsin.
-
-</details>
+**Yardım → Destek raporu kaydet** ile özel anahtarları, profil adlarını, kullanıcı yollarını, IP’leri ve bağlantı hedeflerini içermeyen rapor oluşturabilirsin. Paylaşmadan önce incele. [Sorun bildir](https://github.com/rubarbulut/PocketSocket/issues); `.conf` veya parola ekleme.
 
 ---
 
-<p align="center">
-  <a href="docs/TECHNICAL.md">Geliştirici ve teknik notlar</a> ·
-  <a href="docs/MAC_TEST.md">Gerçek Mac test rehberi</a> ·
-  <a href="THIRD_PARTY_NOTICES.md">Bileşenler ve kaynak</a> ·
-  <a href="LICENSE">GPL-3.0 lisansı</a>
-</p>
+[English](README.en.md) · [Teknik notlar](docs/TECHNICAL.md) · [Test kapsamı](docs/TEST_MATRIX.md) · [Sürüm notları](CHANGELOG.md) · [Güvenlik](SECURITY.md) · [Bileşenler](THIRD_PARTY_NOTICES.md) · [GPL-3.0](LICENSE)

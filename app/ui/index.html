@@ -1,40 +1,60 @@
 <!doctype html>
-<html lang="tr">
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
-  <title>PocketSocket</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="renderer.js" defer></script>
+  <title>PocketSocket</title><link rel="stylesheet" href="style-v2.css">
+  <script src="i18n.js" defer></script><script src="renderer-v2.js" defer></script>
 </head>
 <body>
-  <header>
-    <div class="brand"><span class="mark" aria-hidden="true">p<span>↗</span></span><strong>PocketSocket<span class="beta">MAC BETA</span></strong></div>
-    <div class="status" id="status"><i></i><span id="status-label">Tünel kapalı</span></div>
-  </header>
-  <main>
-    <div class="intro"><span class="eyebrow">BAĞLANTIN, SENİN KURALLARIN.</span><h1>Bir uygulamaya tünel.<br>Geri kalanına özgürlük.</h1><p>Discord farklı yoldan bağlansın. Oyunun kendi bağlantısında kalsın.</p></div>
-    <div id="platform-warning" class="notice hidden" role="note">Bu sürüm macOS 13+ için. Bu bilgisayarda arayüzü inceleyebilirsin; tünel başlatılamaz.</div>
-    <section class="setup" aria-label="Bağlantı kurulumu">
-      <div class="step source-step">
-        <div class="step-heading"><span class="number">01</span><h2>Bağlantını getir</h2></div>
-        <button id="import" class="import"><span class="file-icon" aria-hidden="true">↥</span><span><strong id="profile-title">WireGuard dosyasını seç</strong><small id="profile-subtitle">VPN sağlayıcından aldığın .conf dosyası</small></span><span class="plus" aria-hidden="true">+</span></button>
-        <div class="source-footer"><span>Sunucu bizden değil, kontrol senden.</span><button id="forget" class="text-button hidden">Profili kaldır</button></div>
-      </div>
-      <div class="step apps-step">
-        <div class="step-heading"><span class="number">02</span><h2>Tünelden geçecekleri seç</h2></div>
-        <div id="apps" class="apps"></div>
-        <p class="hint">Diğer uygulamalar doğrudan bağlanır.</p>
-      </div>
-    </section>
-    <section class="routes" aria-label="Bağlantı yolları">
-      <div><span class="route-icon tunnel-icon" aria-hidden="true">↗</span><span><strong id="route-apps">Discord</strong><small>Seçilen uygulamalar</small></span><span class="route-line"></span><span class="route-tag">VPN tüneli</span></div>
-      <div><span class="route-icon direct-icon" aria-hidden="true">→</span><span><strong>Oyun, film ve diğerleri</strong><small>Diğer uygulamalar</small></span><span class="route-line"></span><span class="route-tag direct-tag">Doğrudan internet</span></div>
-    </section>
-    <div class="action"><button id="connect" class="connect" disabled><span id="connect-label">Bağlan</span><span aria-hidden="true">↗</span></button><p id="message" role="status" aria-live="polite">Başlamak için kendi WireGuard profilini seç.</p></div>
-    <details id="diagnostics"><summary><span>Canlı bağlantılar</span><span id="connection-count">0 bağlantı</span></summary><div class="table-wrap"><table><thead><tr><th>Uygulama</th><th>Hedef</th><th>Tür</th><th>Yol</th></tr></thead><tbody id="connections"></tbody></table><p id="empty">Bağlandıktan sonra Discord’u tamamen kapatıp aç. Yeni bağlantılar burada görünür.</p></div></details>
-    <footer><span id="version">PocketSocket</span><span>Profil yalnızca bu oturumda tutulur. Telemetri yok.</span></footer>
-  </main>
-</body>
-</html>
+<header><div class="brand"><span class="mark" aria-hidden="true">p↗</span><strong>PocketSocket</strong><span class="badge">BETA</span></div><nav aria-label="Navigation"><button data-show="connect" class="nav active" data-t="connect"></button><button data-show="settings" class="nav" data-t="settings"></button><button data-show="help" class="nav" data-t="help"></button></nav><select id="quick-language" aria-label="Language"><option value="auto">Auto</option><option value="en">English</option><option value="tr">Türkçe</option></select></header>
+<main>
+  <section id="panel-connect" class="panel">
+    <div class="intro"><div><span class="eyebrow" data-t="tagline"></span><h1 data-t="hero"></h1><p data-t="intro"></p></div><span id="platform" class="platform"></span></div>
+    <div id="status" class="status idle" role="status" aria-live="polite"><span class="status-dot" aria-hidden="true"></span><span id="message"></span></div>
+    <div class="columns">
+      <section class="card"><h2><span class="step">01</span><span data-t="source"></span></h2>
+        <label class="field"><span data-t="mode"></span><select id="mode" data-lock><option value="tunnel" data-t="tunnelMode"></option><option value="dns" data-t="dnsMode"></option><option value="auto" data-t="autoMode"></option></select></label>
+        <div id="profile-controls"><label class="field"><span data-t="profile"></span><select id="profile-select" data-lock></select></label>
+          <button id="import" class="import" data-lock><span class="upload" aria-hidden="true">↥</span><span><strong data-t="import"></strong><small data-t="drop"></small></span><span aria-hidden="true">+</span></button>
+          <div class="small-actions"><button id="proxy-open" data-t="proxy" data-lock></button><button id="profile-delete" data-t="forget" data-lock></button></div>
+          <p id="storage-note" class="hint"></p>
+        </div>
+        <label class="field" id="resolver-field"><span data-t="resolver"></span><select id="resolver" data-lock><option value="cloudflare">Cloudflare</option><option value="google">Google</option><option value="quad9">Quad9</option></select></label>
+        <button id="providers-open" class="text-button" data-t="providers"></button>
+      </section>
+      <section class="card"><h2><span class="step">02</span><span data-t="apps"></span><span id="selected-count" class="count"></span></h2>
+        <input id="app-search" type="search" data-placeholder="search" aria-label="Search applications">
+        <div id="apps" class="apps"></div><p id="browser-warning" class="warning hidden" data-t="browserWarning"></p>
+        <div class="small-actions"><button id="discover" data-t="discover" data-lock></button><button id="choose-app" data-t="chooseApp" data-lock></button></div>
+        <details class="recipes"><summary data-t="recipe"></summary><div class="inline"><input id="recipe-name" maxlength="60" data-placeholder="recipeName"><button id="recipe-save" data-t="saveRecipe" data-lock></button></div><div id="recipe-list"></div></details>
+      </section>
+    </div>
+    <div class="route-preview"><div><span class="route-symbol" aria-hidden="true">↗</span><strong id="route-apps"></strong><span class="route-line"></span><span id="route-target" class="route-tag" data-t="tunnel"></span></div><div><span class="route-symbol direct" aria-hidden="true">→</span><span data-t="noPing"></span><span class="route-line"></span><span class="route-tag neutral" data-t="direct"></span></div></div>
+    <div class="actions"><button id="connect" class="primary" disabled><span id="connect-label" data-t="connect"></span><span aria-hidden="true">↗</span></button><button id="health" class="secondary" data-t="check"></button><p class="hint" data-t="resetHelp"></p></div>
+    <section id="health-results" class="card health hidden"><h2 data-t="latency"></h2><div id="health-grid" class="health-grid"></div><p class="hint" data-t="voice"></p></section>
+    <details id="diagnostics"><summary><span data-t="live"></span><span id="connection-count"></span></summary><div class="table-wrap"><table><thead><tr><th data-t="app"></th><th data-t="destination"></th><th data-t="network"></th><th data-t="route"></th></tr></thead><tbody id="connections"></tbody></table><p id="empty" class="hint" data-t="empty"></p></div></details>
+  </section>
+  <section id="panel-settings" class="panel hidden"><h1 data-t="settings"></h1><div class="columns"><section class="card settings-grid">
+    <label class="field"><span data-t="language"></span><select id="language"><option value="auto" data-t="system"></option><option value="en">English</option><option value="tr">Türkçe</option></select></label>
+    <label class="field"><span data-t="theme"></span><select id="theme"><option value="system" data-t="system"></option><option value="light" data-t="light"></option><option value="dark" data-t="dark"></option></select></label>
+    <label class="check"><input id="remember" type="checkbox" data-lock><span data-t="remember"></span></label>
+    <label class="check"><input id="reconnect" type="checkbox" data-lock><span data-t="reconnect"></span></label>
+    <label class="check" id="login-setting"><input id="launchAtLogin" type="checkbox" data-lock><span data-t="launch"></span></label>
+    <label class="check"><input id="autoConnect" type="checkbox" data-lock><span data-t="autoConnect"></span></label>
+    <label class="check"><input id="closeToTray" type="checkbox"><span data-t="tray"></span></label>
+    <label class="check"><input id="notifications" type="checkbox"><span data-t="notifications"></span></label>
+  </section><section class="card settings-grid"><label class="field"><span data-t="failure"></span><select id="failurePolicy" data-lock><option value="block" data-t="block"></option><option value="direct" data-t="fallback"></option></select></label><p class="hint" data-t="failureHelp"></p><p class="hint" data-t="modeHelp"></p><button id="reset" class="secondary" data-t="resetSettings" data-lock></button><p class="hint" data-t="resetSettingsHelp"></p></section></div>
+    <section class="card updates"><label class="field"><span data-t="channel"></span><select id="channel" data-lock><option value="stable" data-t="stable"></option><option value="beta" data-t="beta"></option></select></label><div class="inline"><button id="updates-check" class="secondary" data-t="updates"></button><button id="updates-download" class="primary hidden" data-t="downloadUpdate"></button><button data-external="releases" class="text-button" data-t="rollback"></button></div><p id="update-message" class="hint" role="status"></p><p class="hint" data-t="unsignedHelp"></p></section>
+  </section>
+  <section id="panel-help" class="panel hidden"><h1 data-t="help"></h1><p class="subtitle" data-t="helpSubtitle"></p><section class="card"><h2 data-t="steps"></h2><ol class="help-steps"><li data-t="step1"></li><li data-t="step2"></li><li data-t="step3"></li></ol><p data-t="welcomeText"></p><p data-t="providerHelp"></p><div id="provider-links" class="inline"></div></section>
+    <section class="card"><h2 data-t="unsigned"></h2><p data-t="unsignedHelp"></p><details open><summary>macOS</summary><p data-t="macHelp"></p><pre><code>xattr -rd com.apple.quarantine "/Applications/PocketSocket.app"</code></pre></details><details><summary>Windows</summary><p data-t="winHelp"></p></details><details><summary>Linux</summary><p data-t="linuxHelp"></p></details></section>
+    <section class="card"><h2 data-t="privacy"></h2><p data-t="privacyIntro"></p><p data-t="failureHelp"></p><p data-t="noPing"></p><div class="inline"><button id="report" class="secondary" data-t="report"></button><button data-external="issues" class="text-button" data-t="feedback"></button><button data-external="source" class="text-button" data-t="sourceCode"></button></div></section>
+  </section>
+  <footer><span id="version"></span><span data-t="privacy"></span><span id="resources"></span></footer>
+</main>
+<div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+<dialog id="welcome"><div class="modal"><span class="eyebrow">POCKETSOCKET</span><h1 data-t="welcome"></h1><p data-t="welcomeText"></p><div class="welcome-steps"><span data-t="step1"></span><span data-t="step2"></span><span data-t="step3"></span></div><p class="hint" data-t="privacyIntro"></p><button id="welcome-start" class="primary" data-t="start"></button></div></dialog>
+<dialog id="proxy-dialog"><form id="proxy-form" class="modal"><h2 data-t="proxy"></h2><p class="hint" data-t="proxyHelp"></p><label class="field"><span data-t="profile"></span><input name="name" value="Local SOCKS5" maxlength="80" required></label><div class="inline"><label class="field"><span data-t="host"></span><select name="host"><option>127.0.0.1</option><option>::1</option><option>localhost</option></select></label><label class="field"><span data-t="port"></span><input name="port" type="number" min="1" max="65535" value="1080" required></label></div><label class="field"><span data-t="username"></span><input name="username" autocomplete="off" maxlength="256"></label><label class="field"><span data-t="password"></span><input name="password" type="password" autocomplete="off" maxlength="256"></label><label class="check"><input name="udp" type="checkbox"><span data-t="udp"></span></label><div class="inline"><button type="submit" class="primary" data-t="save"></button><button type="button" data-dismiss="proxy-dialog" class="secondary" data-t="cancel"></button></div></form></dialog>
+<dialog id="discover-dialog"><div class="modal"><h2 data-t="discover"></h2><input id="discovered-search" type="search" data-placeholder="search"><div id="discovered-list" class="discovered-list"></div><button data-dismiss="discover-dialog" class="secondary" data-t="close"></button></div></dialog>
+</body></html>

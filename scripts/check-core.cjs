@@ -53,7 +53,7 @@ async function port() {
     assert.equal(active.tun.enable, false);
     const rules = await (await fetch(url + '/rules', { headers: { Authorization: `Bearer ${config.secret}` } })).json();
     assert.equal(rules.rules.at(-1).proxy, 'DIRECT');
-    assert(rules.rules.some(r => r.proxy === 'PocketTunnel'));
+    assert(rules.rules.some(r => r.proxy === 'PocketRoute'));
     console.log('Core started without route changes; controller auth and live routing rules verified.');
   } finally {
     if (child && child.exitCode === null) {
