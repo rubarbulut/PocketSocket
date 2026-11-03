@@ -1,6 +1,6 @@
 # PocketSocket 0.2 · Technical notes
 
-[English guide](../README.en.md) · [Türkçe rehber](../README.md) · [Test matrix](TEST_MATRIX.md)
+[English guide](../README.md) · [Türkçe rehber](../README.tr.md) · [Test matrix](TEST_MATRIX.md)
 
 ## Architecture
 

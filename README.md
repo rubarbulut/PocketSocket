@@ -1,122 +1,100 @@
-<p align="center"><img src="docs/images/hero.svg" alt="PocketSocket: seçtiğin uygulamalar tünelden, diğerleri doğrudan internetten." width="100%"></p>
-<p align="center"><strong>Ücretsiz · Açık kaynak · Windows / macOS / Linux · Türkçe / English</strong></p>
-<p align="center"><a href="README.en.md">English</a> · <a href="https://github.com/rubarbulut/PocketSocket/releases"><strong>📥 İNDİR</strong></a> · <a href="#ilk-bağlantı">🟢 Bağlan</a> · <a href="#açılmıyor-mu">🛟 Yardım</a></p>
+<p align="center"><img src="docs/images/hero-en.svg" alt="PocketSocket: selected apps through your tunnel, everything else direct." width="100%"></p>
+<p align="center"><strong>Free · Open source · Windows / macOS / Linux · English / Türkçe</strong></p>
+<p align="center"><a href="README.tr.md">Türkçe</a> · <a href="https://github.com/rubarbulut/PocketSocket/releases"><strong>📥 DOWNLOAD</strong></a> · <a href="#connect">🟢 Connect</a> · <a href="#installation-help">🛟 Help</a></p>
 
-> **Public beta:** PocketSocket sunucu veya VPN hesabı vermez. Tünel için kendi WireGuard profilini veya uyumlu bir **yerel SOCKS5 proxy** getirirsin. Ücretsiz DNS modu da vardır; her erişim engelini aşmaz.
+> **Public beta.** Bring your own WireGuard internet profile or compatible **localhost SOCKS5 proxy**. PocketSocket provides no VPN servers or accounts. Encrypted DNS mode is also available; it cannot bypass every access restriction.
 
-## 1 · Cihazını seç
+## Download and install
 
-**[İndirme sayfasını aç →](https://github.com/rubarbulut/PocketSocket/releases)** GitHub’a giriş yapman gerekmez. [Tüm yayın dosyaları, kaynak ve SHA256SUMS](https://github.com/rubarbulut/PocketSocket/releases).
+**[Open the download page →](https://github.com/rubarbulut/PocketSocket/releases)** No GitHub account required. [All release files, corresponding source and SHA256SUMS](https://github.com/rubarbulut/PocketSocket/releases).
 
-| Cihaz | Paket |
+| Device | Package |
 | --- | --- |
-| **MacBook Neo / A18 Pro** veya M serisi Mac | **mac-arm64.dmg** |
+| **MacBook Neo / A18 Pro**, or M-series Mac | **mac-arm64.dmg** |
 | Intel Mac | **mac-x64.dmg** |
-| Windows 11 · x64 | **win-x64.exe**; ayrıca portable EXE |
-| Masaüstü Linux · x64 | **linux-x64.AppImage**; ayrıca tar.gz |
+| Windows 11 · x64 | **win-x64.exe**, or portable EXE |
+| Desktop Linux · x64 | **linux-x64.AppImage**, or tar.gz |
 
-Mac için macOS 13+, Linux yönlendirmesi için PolicyKit ve masaüstü izin aracısı gerekir. Bu sürüm iPhone/Android uygulaması değildir.
+Mac requires macOS 13+. Linux routing requires PolicyKit and a desktop authentication agent. This release does not include an iPhone or Android application.
 
-## 2 · Kur
+**Mac:** open DMG → drag PocketSocket to Applications → open it. **Windows:** run the installer, or keep the portable EXE in a permanent folder. **Linux:** make the AppImage executable; if FUSE is unavailable, unpack the tar.gz and run `pocketsocket`.
 
-**Mac:** DMG’yi aç → PocketSocket’i Applications’a taşı → aç.
+## Connect
 
-![Mac kurulumu: DMG'yi aç, PocketSocket'i Applications'a taşı, uygulamayı aç.](docs/images/install.svg)
+1. **Choose a mode:** selected-app tunnel, encrypted DNS, or smart detection.
+2. **Add your connection:** select/drop your WireGuard `.conf` file or enter your localhost SOCKS5 details.
+3. **Choose your apps:** presets include Discord variants, Telegram, Signal, Slack and browsers. Discover installed applications or select an executable/app bundle manually.
+4. **Connect** → approve the OS administrator prompt → restart the selected app. Test Discord text, voice and microphone separately.
 
-**Windows:** EXE’yi aç → kur. Portable sürümü kullanıyorsan dosyayı kalıcı bir klasöre koy.
+![PocketSocket 0.2 English initial interface preview; no live VPN connection is shown.](docs/images/app-v2-en.png)
 
-**Linux:** AppImage’a çalıştırma izni ver → aç. FUSE yoksa tar.gz arşivini açıp içindeki `pocketsocket` dosyasını çalıştır.
+**Live connections** should show **Tunnel** for selected applications and **Direct** for others. Selecting a browser affects the **whole browser**, not just one tab.
 
-**İlk açılışta** kısa rehberi tamamla. Dil ve açık/koyu tema **Ayarlar** bölümündedir.
+<details><summary>Where do I get a connection?</summary>
 
-## İlk bağlantı
+Look for **WireGuard / manual setup / configuration download** in your provider account. The app links to setup pages; these are not account integrations or sponsored recommendations. Availability, subscription requirements and quotas depend on your provider. Do not share the `.conf`: it contains a private key. Custom scripts and nonstandard WireGuard fields are rejected.
 
-![Profil seç, uygulamanı işaretle, Bağlan'a bas, uygulamanı kapatıp yeniden aç.](docs/images/connect.svg)
-
-1. **Yöntemi seç:** uygulama tüneli, şifreli DNS veya akıllı algılama.
-2. **Bağlantını ekle:** WireGuard `.conf` dosyasını seç/sürükle ya da yerel SOCKS5 bilgilerini gir.
-3. **Uygulamalarını seç:** Discord, Telegram, Signal, Slack ve tarayıcı seçenekleri hazır. **Yüklü uygulamaları bul** veya **Uygulama seç** ile başka uygulama ekleyebilirsin.
-4. **Bağlan** → sistemin yönetici iznini onayla → seçilen uygulamayı yeniden aç. Discord’da mesaj, ses ve mikrofonu ayrı ayrı dene.
-
-![PocketSocket 0.2 Türkçe başlangıç arayüzü önizlemesi; aktif VPN bağlantısı göstermez.](docs/images/app-v2-tr.png)
-
-**Canlı bağlantılar:** seçtiğin uygulamalarda **Tünel**, diğerlerinde **Doğrudan** görmelisin. Tarayıcı seçimi **tüm tarayıcıyı** etkiler; yalnızca Discord sekmesini seçmiş olmazsın.
-
-<details><summary>📄 WireGuard dosyam yok. Nereden alırım?</summary>
-
-Sağlayıcının hesabında **WireGuard / manuel kurulum / yapılandırma indir** bölümünü ara. Uygulama içindeki **Profil dosyasını nereden alırım?** bağlantısı kurulum sayfalarını gösterir. Her sağlayıcı veya ücretsiz plan bu dosyayı sunmaz; PocketSocket bu sınırı kaldırmaz. Bunlar hesap entegrasyonu veya sponsorlu öneri değildir.
-
-`.conf` dosyasında özel anahtarın vardır: **paylaşma**. Script veya standart dışı protokol alanı olan profiller kabul edilmez.
+If an existing provider app exposes a localhost SOCKS5 proxy, add it and keep that app running. UDP support must be supplied by the provider app; enabling a checkbox does not add it. Disable that provider’s system-wide VPN tunnel if you want other applications to remain direct. Not every VPN app supports this method.
 
 </details>
 
-<details><summary>🔌 Mevcut VPN uygulamamla kullanabilir miyim?</summary>
+## Connection modes
 
-Uygulama bir **localhost SOCKS5 proxy** sunuyorsa yerel proxy olarak ekleyebilirsin. O uygulama açık kalmalı; Discord sesi için UDP desteğini de o sağlamalıdır. Kutuyu işaretlemek UDP desteği eklemez. Diğer uygulamaların doğrudan kalması için sağlayıcının cihaz genelindeki VPN tünelini kapatıp yalnız proxy yöntemini kullanman gerekebilir. Her VPN uygulaması bu yöntemi desteklemez.
-
-</details>
-
-## Üç bağlantı yöntemi
-
-| Yöntem | Ne yapar? |
+| Mode | Behavior |
 | --- | --- |
-| **Seçilen uygulamalara tünel** | Seçtiğin uygulamaları kendi profilinden, diğerlerini doğrudan çıkarır. |
-| **Şifreli DNS** | Cihazın DNS trafiğini yerel motor üzerinden şifreli çözümleyiciye gönderir. Ülkeni değiştirmez. |
-| **Akıllı algılama** | Discord HTTPS erişimini önce doğrudan, sonra şifreli DNS ile dener; gerekirse profilini kullanır. Sesin çalıştığını kanıtlamaz. |
+| Selected-app tunnel | Selected applications use your profile; others use direct outbound routing. |
+| Encrypted DNS | Device-wide DNS traffic is handled by the local engine and an encrypted resolver. It does not change your country. |
+| Smart detection | Tests Discord HTTPS directly, then with encrypted DNS, before choosing your profile if needed. It does not prove voice works. |
 
-**DNS modu cihaz genelini etkiler.** Tünel modunda da yerel TUN motoru ve DNS yakalama çalışır. DNS sunucusu, yerel işlem yükü ve ortak internet hattının yoğunluğu diğer uygulamaların gecikmesini etkileyebilir. **Sıfır ping değişimi garantisi yoktur.**
+DNS mode affects the device’s DNS traffic. Tunnel mode also uses a local TUN engine and DNS interception. Local processing, DNS resolution and shared bandwidth can affect latency. **Zero ping change is not guaranteed.**
 
-## Kontrol et, tahmin etme
+**Check connection** measures real profile outbound and Discord HTTPS access. Reported HTTP latency is **not game ping**. Observed UDP traffic does not establish microphone or voice quality. Specific ISPs, providers, Discord voice/screen sharing and concurrent gaming need real-world testing.
 
-**Bağlantıyı kontrol et** gerçek profil çıkışını ve Discord HTTPS erişimini ayrı kontrol eder. Doğrudan/profil gecikmesi **HTTP testidir, oyun ping’i değildir**. UDP trafiği görülmesi mikrofon veya ses kalitesinin doğrulandığı anlamına gelmez.
+## Installation help
 
-Türkiye’de belirli sağlayıcı/ISS’lerde erişim, gerçek Discord sesi, ekran paylaşımı ve oyun gecikmesi için [gerçek cihaz test rehberi](docs/MAC_TEST.md) kullanılmalı. CI testleri bunları kanıtlamaz.
+This free distribution has **no paid Apple Developer ID/notarization or Windows publisher certificate**. Mac packages use an ad-hoc integrity signature. OS trust warnings may still appear. Signed update manifests are independent of OS publisher signing.
 
-## Açılmıyor mu?
+### macOS: “damaged” / unidentified developer
 
-### Mac · “Hasarlı” / “Geliştirici doğrulanamıyor”
+Move the app to Applications and try opening it. Check **System Settings → Privacy & Security → Open Anyway**. [Apple’s guide](https://support.apple.com/en-us/102445).
 
-Bu ücretsiz yayında **ücretli Apple Developer ID veya noter onayı yok**. 0.2 Mac paketi ücretsiz ad-hoc bütünlük imzasıyla hazırlanır; bu Apple’ın yayıncı kimliğimizi doğruladığı anlamına gelmez.
-
-1. Applications’a taşı ve bir kez açmayı dene.
-2. **Sistem Ayarları → Gizlilik ve Güvenlik → Yine de Aç** bölümünü kontrol et. [Apple rehberi](https://support.apple.com/en-us/102445).
-3. Kaynağını doğruladığın PocketSocket kopyası için gerekirse Terminal’de:
+For a trusted copy downloaded from this project, this removes only PocketSocket’s download quarantine:
 
 ```sh
 xattr -rd com.apple.quarantine "/Applications/PocketSocket.app"
 ```
 
-Yalnızca bu uygulamanın indirme karantinası kaldırılır. Bozuk dosya veya geçersiz imza onarılmaz. Hata sürerse tam hata metnini bildir.
+It does not repair a damaged file or invalid signature. If the error continues, report its exact text.
 
-### Windows · Güven uyarısı
+### Windows: trust warning
 
-Yayını ve **SHA256SUMS** dosyasını doğrula. SmartScreen **Daha fazla bilgi → Yine de çalıştır** sunuyorsa yalnız doğruladığın kopya için kullan. Smart App Control veya yönetici politikası imzasız dosyayı yine de engelleyebilir. **Cihaz genelindeki korumayı kapatmanı istemiyoruz.**
+Check the release and **SHA256SUMS**. If SmartScreen offers **More info → Run anyway**, use it only for the copy you verified. Smart App Control or an administrator policy can still block unsigned software. Do not disable device-wide security protection.
 
-### Linux · Başlatma / izin sorunu
+### Linux: launch / permission issue
 
-AppImage’a çalıştırma izni ver. FUSE yoksa arşiv paketini kullan. Yönetici izni için `/usr/bin/pkexec` ve çalışan masaüstü izin aracısı gerekir. Sistem anahtarlığı yoksa profiller kalıcı kaydedilmez; yalnız oturumda tutulur.
+Make the AppImage executable or use the tar.gz archive. Routing needs `/usr/bin/pkexec` and a working desktop authentication agent. If an OS-backed key store is unavailable, profiles remain session-only.
 
-Bu adımlar uygulama içindeki **Yardım** bölümünde de var.
+These instructions are also available inside **Help**.
 
-## Günlük kullanım
+## Everyday features
 
-- **TR/EN ve tema:** sistem dili, Türkçe/İngilizce, sistem/açık/koyu görünüm.
-- **Güvenli profil kaydı:** işletim sistemi şifrelemesi, çoklu profil; güvenli depo yoksa oturumluk kullanım.
-- **Uygulama seçimleri:** arama, keşif, elle ekleme ve isim vererek seçim kaydetme.
-- **Tepsi/menü çubuğu:** bağlan/kes, ayarlar ve çıkış. Pencere kapanınca devam etmek isteğe bağlıdır.
-- **Başlangıç:** Mac/Windows’ta oturum açılışı; uygulama açıldığında bağlanma isteğe bağlıdır ve sistem izin penceresi gösterebilir.
-- **Toparlanma:** motor çalışırken ağ değişikliği/uyanma kontrolleri ve çıkış yeniden denemeleri. Motor durduğunda arkada yeni yönetici penceresi açılmaz; tekrar **Bağlan**’a basarsın.
-- **Sunucu hatası:** motor çalışırken seçilen uygulamayı engelle veya açık tercihinle doğrudan devam et. Doğrudan devam normal IP’ni gösterebilir.
-- **Güncelleme:** kararlı/beta kanalı, sabit public key ile imzalı manifest ve dosya sağlaması doğrulama. İndirilen kurulumu uygun olduğunda kendin başlatırsın; oyun sırasında yeniden başlatma yapılmaz. [Önceki sürümler](https://github.com/rubarbulut/PocketSocket/releases).
+- English/Turkish with system-language detection; system/light/dark appearance.
+- Multiple profiles saved with OS-backed encryption, or session-only operation when protected storage is unavailable.
+- Application search/discovery, custom application selection and named app-selection recipes.
+- Tray/menu-bar connection controls; optional keep-running-on-close behavior.
+- Optional login startup on Mac/Windows and optional connection on app start. Startup connection can request OS administrator permission.
+- Network/wake checks and outbound recovery while the engine runs. A stopped engine requires a user-initiated reconnect; no background administrator prompt is opened.
+- Explicit block/direct fallback policy for selected apps while the engine runs. Direct fallback may expose your normal IP.
+- Stable/beta update channels, pinned-key signed manifest validation and file checksum verification. Downloaded installers are launched by you when convenient; games are not interrupted. [Earlier releases / rollback](https://github.com/rubarbulut/PocketSocket/releases).
 
-**Bu sürümde motor çökünce korumayı sürdüren bir işletim sistemi kill switch’i yok.** Motor kapanınca normal yönlendirme geri döner. Uygulama tanınamazsa trafik doğrudan çıkabilir; canlı bağlantılarla kontrol et. Ortak sistem yardımcıları kullanan uygulamalarda özel kurallar gerekebilir.
+**This is not a crash-proof OS kill switch.** If the engine stops, ordinary system routing returns. Unrecognized app traffic can be direct; check the live connection view. Apps using shared system helpers may need additional rules.
 
-## Gizlilik ve destek
+## Privacy and support
 
-PocketSocket analiz verisi veya gezinme geçmişi toplamaz. Profiller cihazında kalır. Bağlantı testleri Discord ve Google bağlantı test adresine; akıllı DNS algılama ayrıca Cloudflare’a ulaşır. Güncelleme kontrolü GitHub’a yapılır. [Gizlilik ayrıntıları](docs/PRIVACY.md).
+No PocketSocket analytics or browsing-history collection. Profiles stay on your device. Connection checks contact Discord and Google’s connectivity endpoint; smart DNS detection also contacts Cloudflare. Update checks use GitHub. [Privacy details](docs/PRIVACY.md).
 
-**Yardım → Destek raporu kaydet** ile özel anahtarları, profil adlarını, kullanıcı yollarını, IP’leri ve bağlantı hedeflerini içermeyen rapor oluşturabilirsin. Paylaşmadan önce incele. [Sorun bildir](https://github.com/rubarbulut/PocketSocket/issues); `.conf` veya parola ekleme.
+**Help → Save support report** exports an allowlisted report without private keys, profile names, user paths, IPs or connection destinations. Review it before sharing. [Report an issue](https://github.com/rubarbulut/PocketSocket/issues); never attach a `.conf` file or password.
 
 ---
 
-[English](README.en.md) · [Teknik notlar](docs/TECHNICAL.md) · [Test kapsamı](docs/TEST_MATRIX.md) · [Sürüm notları](CHANGELOG.md) · [Güvenlik](SECURITY.md) · [Bileşenler](THIRD_PARTY_NOTICES.md) · [GPL-3.0](LICENSE)
+[Türkçe](README.tr.md) · [Technical notes](docs/TECHNICAL.md) · [Test coverage](docs/TEST_MATRIX.md) · [Changes](CHANGELOG.md) · [Security](SECURITY.md) · [Third-party notices](THIRD_PARTY_NOTICES.md) · [GPL-3.0](LICENSE)

@@ -6,7 +6,7 @@ function translate(language){
   document.documentElement.lang=language;document.getElementById('language').value=language;
   document.querySelectorAll('[data-i]').forEach(n=>{n.innerText=(language==='tr'?tr[n.dataset.i]:originals[n.dataset.i])||originals[n.dataset.i]});
   document.getElementById('preview').src='images/app-v2-'+language+'.png';
-  document.getElementById('guide').href='https://github.com/rubarbulut/PocketSocket/blob/main/'+(language==='tr'?'README.md':'README.en.md');
+  document.getElementById('guide').href='https://github.com/rubarbulut/PocketSocket/blob/main/'+(language==='tr'?'README.tr.md':'README.md');
   if(release)document.getElementById('release-status').textContent=release.tag_name+' · Public beta';
   try{localStorage.setItem('language',language)}catch{}
 }
