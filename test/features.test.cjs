@@ -14,6 +14,7 @@ const {verifyManifest,newer,allowedURL}=require('../app/lib/updates.cjs');
 const {supportReport}=require('../app/lib/diagnostics.cjs');
 const {en,tr}=require('../app/ui/i18n.js');
 const {profile,privateKey}=require('./fixtures.cjs');
+const {normalizeArtifacts}=require('../scripts/artifacts.cjs');
 const key=crypto.randomBytes(32);
 const protectedCrypto={isAsyncEncryptionAvailable:async()=>true,encryptStringAsync:async text=>{const iv=crypto.randomBytes(12),c=crypto.createCipheriv('aes-256-gcm',key,iv),data=Buffer.concat([c.update(text,'utf8'),c.final()]);return Buffer.concat([iv,c.getAuthTag(),data])},decryptStringAsync:async buffer=>{const d=crypto.createDecipheriv('aes-256-gcm',key,buffer.subarray(0,12));d.setAuthTag(buffer.subarray(12,28));return {result:Buffer.concat([d.update(buffer.subarray(28)),d.final()]).toString('utf8'),shouldReEncrypt:false}}};
 test('secure profiles survive restart without writing private keys or proxy passwords in plaintext',async()=>{
@@ -57,3 +58,7 @@ test('support exports omit private configuration and connection destinations',()
   const raw=JSON.stringify(r);assert(!raw.includes(privateKey));assert(!raw.includes('private.example'));assert(!raw.includes('Secret.exe'));
 });
 test('English and Turkish have matching complete translation dictionaries',()=>{assert.deepEqual(Object.keys(en).sort(),Object.keys(tr).sort());for(const key of Object.keys(en)){assert(en[key]);assert(tr[key]);}});
+test('published AppImage naming matches the updater contract without changing binary content',async()=>{
+  const dir=await fs.mkdtemp(path.join(os.tmpdir(),'pocket-artifacts-'));const bytes=crypto.randomBytes(200);
+  try{await fs.writeFile(path.join(dir,'PocketSocket-0.2.0-linux-x86_64.AppImage'),bytes);await normalizeArtifacts(dir);assert.deepEqual(await fs.readFile(path.join(dir,'PocketSocket-0.2.0-linux-x64.AppImage')),bytes);assert.deepEqual(await fs.readdir(dir),['PocketSocket-0.2.0-linux-x64.AppImage']);}finally{await fs.rm(dir,{recursive:true,force:true})}
+});

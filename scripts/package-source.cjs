@@ -5,8 +5,10 @@ const path = require('node:path');
 const { createHash } = require('node:crypto');
 const { version } = require('./core-manifest.json');
 const app = require('../package.json');
+const {normalizeArtifacts}=require('./artifacts.cjs');
 (async () => {
   await fs.mkdir('dist', { recursive: true });
+  await normalizeArtifacts('dist');
   execFileSync('git', ['archive', '--format=tar.gz', '--prefix=PocketSocket/', '--output', path.resolve('dist', `PocketSocket-${app.version}-source.tar.gz`), 'HEAD']);
   const r = await fetch(`https://codeload.github.com/MetaCubeX/mihomo/tar.gz/refs/tags/${version}`, { signal: AbortSignal.timeout(120000) });
   if (!r.ok) throw new Error(`Source download failed: ${r.status}`);
