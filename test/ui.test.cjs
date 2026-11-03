@@ -59,9 +59,9 @@ test('desktop lifecycle: translations, profiles, preferences and redacted report
     await page.locator('[data-show="settings"]').click();await page.locator('#reset').click();
     await page.locator('[data-show="connect"]').click();
     assert.deepEqual(errors,[]);await fs.mkdir('.build',{recursive:true});
-    // A hidden packaged Linux window can have no compositor frame under Xvfb.
-    // Only disposable CI may reveal it; local test runs stay hidden.
-    if(process.platform==='linux'&&process.env.GITHUB_ACTIONS==='true')await desktop.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].showInactive());
+    // Hidden packaged windows can have no compositor frame on virtual displays.
+    // Only disposable CI may reveal them; local test runs stay hidden.
+    if(process.env.GITHUB_ACTIONS==='true')await desktop.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].showInactive());
     await page.screenshot({path:'.build/desktop.png',fullPage:true});
   }finally{await desktop.close();await fs.rm(temp,{recursive:true,force:true})}
 });
